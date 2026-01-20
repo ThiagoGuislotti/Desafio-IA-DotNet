@@ -1,0 +1,103 @@
+# https://opentelemetry.io/docs/collector/configuration/
+# Receivers define the data sources from which OpenTelemetry will receive metrics, traces, or logs.
+receivers:
+  # Data sources: traces, metrics, logs
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+  # Data sources: metrics
+  # Optional. Host Metrics Receiver added as an example of Infra Monitoring capabilities of the OpenTelemetry Collector
+  hostmetrics:
+    # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/receiver/hostmetricsreceiver
+    scrapers:
+      cpu:
+      disk:
+      filesystem:
+      load:
+      memory:
+      network:
+      process:
+      processes:
+      paging:
+
+# Exporters define the destinations where data will be sent (such as Prometheus, OTLP, etc.)
+exporters:
+  debug:
+    verbosity: detailed
+
+  # Prometheus
+  prometheus:
+    endpoint: otel-collector:8889
+    send_timestamps: true
+    resource_to_telemetry_conversion:
+      enabled: true
+
+  # Grafana
+  otlp/tempo:
+    endpoint: tempo:4317
+    tls:
+      insecure: true
+
+  otlphttp/loki:
+    endpoint: http://loki:3100/otlp
+    tls:
+      insecure: true
+
+  # Jaeger
+  otlp/jaeger:
+    endpoint: jaeger:4317
+    tls:
+      insecure: true
+
+  # Seq
+  otlphttp/seq:
+    endpoint: http://seq:5341/ingest/otlp
+    tls:
+      insecure: true
+
+  # Aspire Dashboard
+  otlp/aspire-dashboard:
+    endpoint: aspire-dashboard:18889
+    tls:
+      insecure: true
+
+# Processors define the processors used to transform the received data before sending it to exporters.
+# https://opentelemetry.io/docs/specs/semconv/resource/
+processors:
+  batch:
+    timeout: 1s
+    send_batch_size: 1024
+
+  resourcedetection:
+    # Enriches telemetry data with resource information from the host
+    # https://github.com/open-telemetry/opentelemetry-collector-contrib/tree/main/processor/resourcedetectionprocessor
+    detectors: ["env", "system"]
+    override: false
+
+# Extensions define optional features such as health monitoring or additional diagnostics.
+extensions:
+  health_check:
+  pprof:
+  zpages:
+    endpoint: otel-collector:55679
+
+# Service configures the service pipelines and extensions.
+service:
+  extensions: [health_check, pprof, zpages]
+  pipelines:
+    metrics:
+      receivers: [otlp, hostmetrics]
+      processors: [batch, resourcedetection]
+      exporters: [debug, prometheus, otlp/aspire-dashboard]
+    traces:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, otlp/tempo, otlp/jaeger, otlphttp/seq, otlp/aspire-dashboard]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug, otlphttp/loki, otlphttp/seq, otlp/aspire-dashboard]

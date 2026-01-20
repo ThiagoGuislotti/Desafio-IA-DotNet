@@ -1,0 +1,30 @@
+services:
+
+  worker:
+    build:
+      context: ..
+      dockerfile: src/CustomerPlatform.Worker/Dockerfile
+      args:
+        VERSION_CORE: ${VERSION_CORE}
+    image: customerplatform-worker:${VERSION_CORE}
+    container_name: worker-${COMPOSE_PROJECT_NAME}
+    restart: always
+    deploy:
+      resources:
+        limits:
+          cpus: "4"
+          memory: "4GB"
+    networks:
+      - nginxproxy
+    env_file:
+      - env/connectionStrings.otlp.env
+      - env/connectionStrings.postgres.env
+      - env/connectionStrings.rabbitmq.env
+      - env/minio.env
+      - env/serilog.env
+    environment:
+      DOTNET_ENVIRONMENT: ${DOTNET_ENVIRONMENT}
+      Serilog__Properties__Application: "CustomerPlatform.Worker"
+
+networks:
+  nginxproxy:

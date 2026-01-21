@@ -11,6 +11,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerPlatform.Infrastruc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerPlatform.Tests", "tests\CustomerPlatform.Tests\CustomerPlatform.Tests.csproj", "{D4E5F6A7-B8C9-7D8E-1F2A-3B4C5D6E7F8A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerPlatform.UnitTests", "tests\CustomerPlatform.UnitTests\CustomerPlatform.UnitTests.csproj", "{3D8A7F92-698E-4DD6-BC1C-763CFE482F3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomerPlatform.IntegrationTests", "tests\CustomerPlatform.IntegrationTests\CustomerPlatform.IntegrationTests.csproj", "{DE125ACA-03AF-4622-9844-B6504946403F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -33,6 +37,14 @@ Global
 		{D4E5F6A7-B8C9-7D8E-1F2A-3B4C5D6E7F8A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4E5F6A7-B8C9-7D8E-1F2A-3B4C5D6E7F8A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4E5F6A7-B8C9-7D8E-1F2A-3B4C5D6E7F8A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D8A7F92-698E-4DD6-BC1C-763CFE482F3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D8A7F92-698E-4DD6-BC1C-763CFE482F3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D8A7F92-698E-4DD6-BC1C-763CFE482F3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D8A7F92-698E-4DD6-BC1C-763CFE482F3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DE125ACA-03AF-4622-9844-B6504946403F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DE125ACA-03AF-4622-9844-B6504946403F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DE125ACA-03AF-4622-9844-B6504946403F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DE125ACA-03AF-4622-9844-B6504946403F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
 

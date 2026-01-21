@@ -13,10 +13,11 @@ Fase 1 - Planejamento e alinhamento
 - [x] Registrar Prompt #1 em `PROMPTS_UTILIZADOS.md`.
 
 Fase 2 - Dominio
-- [ ] Adicionar Enums, ValueObjects e Events.
-- [ ] Definir regras de validacao e excecoes de negocio.
-- [ ] Criar testes unitarios do dominio (entidades, value objects, regras).
-- [ ] Registrar Prompt #2 em `PROMPTS_UTILIZADOS.md`.
+- [x] Adicionar Enums, ValueObjects e Events.
+- [x] Definir regras de validacao e excecoes de negocio.
+- [x] Criar testes unitarios do dominio (entidades, value objects, regras).
+- [x] Criar estrutura inicial de testes de integracao (setup do runner).
+- [x] Registrar Prompt #2 em `PROMPTS_UTILIZADOS.md`.
 
 Fase 3 - Application
 - [ ] Criar `CustomerPlatform.Application` com Cqrs/, Abstractions/ e DependencyInjections/.
@@ -49,7 +50,8 @@ Fase 6 - Testes, Docker e Docs
 ## Estado atual (mapeado)
 Dominio
 - [x] Entidades base de cliente existem em `src/CustomerPlatform.Domain/Entities/Customer.cs`.
-- [ ] Pasta Enums e eventos de dominio ainda nao existem.
+- [x] Entidades PF/PJ separadas por arquivo em `src/CustomerPlatform.Domain/Entities`.
+- [x] Pastas Enums, ValueObjects, Events e Exceptions existem.
 
 Aplicacao
 - [ ] `src/CustomerPlatform.Application` nao existe.
@@ -68,8 +70,8 @@ Worker
 
 Testes
 - [x] `tests/CustomerPlatform.Tests` existe (legado).
-- [ ] `tests/CustomerPlatform.UnitTests` nao existe.
-- [ ] `tests/CustomerPlatform.IntegrationTests` nao existe.
+- [x] `tests/CustomerPlatform.UnitTests` existe.
+- [x] `tests/CustomerPlatform.IntegrationTests` existe (setup inicial).
 
 Docker
 - [x] Pasta `docker/` com compose files existe.

@@ -55,70 +55,6 @@ Follow this order of operations on every task:
 - More specific scope wins (narrower `applyTo` beats broader)
 - Prefer safer/minimal changes when ambiguous, and ask 1-3 clarifying questions if needed
 
-# Project-Specific Constraints
-
-## Target Architecture (Simple)
-```text
-docker/                             # All required docker files
-src/
-  CustomerPlatform.Api/             # Web API project
-    Controllers/                    # REST controllers
-    Properties/                     # Launch settings
-    Program.cs                      # Entry point
-    appsettings.json                # Settings
-  CustomerPlatform.Application/     # Business rules layer
-    Cqrs/                           # Commands and queries
-    DependencyInjections/
-    Abstractions/
-  CustomerPlatform.Domain/          # Domain layer
-    Enums/
-    Entities/
-      Customer.cs                   # Base customer model
-  CustomerPlatform.Infrastructure/  # Infrastructure layer
-    DependencyInjections/
-    Logicas De ML/
-    MessageBus/
-    Context/
-tests/
-  CustomerPlatform.IntegrationTests/
-  CustomerPlatform.UnitTests/
-  CustomerPlatform.Tests/           # Legacy, must be removed
-    CustomerTests.cs
-CustomerPlatform.sln
-docker-compose.exemplo.yml
-nuget.config
-.gitignore
-AGENTS.md
-README.md
-DESAFIO.md
-CRITERIOS_AVALIACAO.md
-TEMPLATE_ENTREGA.md
-DECISOES_TECNICAS.md
-COMO_EXECUTAR.md
-ARQUITETURA.md
-PLANEJAMENTO.md
-```
-
-## Required Stack
-- EntityFrameworkCore
-- MediatR (13.0.0)
-- RabbitMQ
-- PostgreSQL
-- Serilog
-- OpenTelemetry (logs, metrics, traces)
-- Aspire Dashboard
-- Ductus.FluentDocker
-- Swagger
-- Polly
-
-## Not Allowed
-- AutoMapper
-- FluentAssertions
-- MassTransit
-
-## Execution Order
-- Always start from Domain and move outward: Domain -> Application -> Infrastructure -> API -> Tests -> Docker -> Docs.
-
 # Workflow
 
 ## How to use
@@ -154,3 +90,17 @@ PLANEJAMENTO.md
 - Do not leave a trailing blank line at the end of files.
 - For files under `.github/instructions/*.md` and Copilot/Codex instruction outputs: do NOT include a final newline (consistent with AGENTS.md).
 - For other files, follow `.editorconfig` rules (final newline usually enforced); always avoid trailing whitespace.
+
+# Coding Conventions
+
+## If statements
+- Single-line `if` statements that contain only `return` or `throw` may omit curly braces.
+- Use curly braces `{}` whenever:
+  - there is an `else`
+  - the condition is complex
+  - the block may reasonably grow in the future
+
+## XML Documentation
+- All public classes, methods and properties must have XML documentation.
+- Constructors must have XML documentation with a short description (e.g. "Construtor").
+- Private or internal members must be documented only when they contain non-obvious business rules.

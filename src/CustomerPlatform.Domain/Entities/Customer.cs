@@ -1,51 +1,98 @@
-namespace CustomerPlatform.Domain.Entities;
+using System;
+using CustomerPlatform.Domain.Enums;
+using CustomerPlatform.Domain.Exceptions;
+using CustomerPlatform.Domain.ValueObjects;
 
-/// <summary>
-/// Entidade base para clientes
-/// </summary>
-public abstract class Customer
+namespace CustomerPlatform.Domain.Entities
 {
-    public Guid Id { get; set; }
-    public string Email { get; set; } = string.Empty;
-    public string Telefone { get; set; } = string.Empty;
-    public DateTime DataCriacao { get; set; }
-    public DateTime? DataAtualizacao { get; set; }
+    /// <summary>
+    /// Entidade base para clientes.
+    /// </summary>
+    public abstract class Customer
+    {
+        #region Public Properties
+        /// <summary>
+        /// Identificador unico do cliente.
+        /// </summary>
+        public Guid Id { get; private set; }
 
-    // Endereço
-    public string Logradouro { get; set; } = string.Empty;
-    public string Numero { get; set; } = string.Empty;
-    public string? Complemento { get; set; }
-    public string CEP { get; set; } = string.Empty;
-    public string Cidade { get; set; } = string.Empty;
-    public string Estado { get; set; } = string.Empty;
+        /// <summary>
+        /// Email principal do cliente.
+        /// </summary>
+        public Email Email { get; private set; } = null!;
 
-    public abstract string GetDocumento();
-    public abstract string GetNome();
+        /// <summary>
+        /// Telefone principal do cliente.
+        /// </summary>
+        public Telefone Telefone { get; private set; } = null!;
+
+        /// <summary>
+        /// Endereco principal do cliente.
+        /// </summary>
+        public Endereco Endereco { get; private set; } = null!;
+
+        /// <summary>
+        /// Data de criacao do registro.
+        /// </summary>
+        public DateTime DataCriacao { get; private set; }
+
+        /// <summary>
+        /// Data da ultima atualizacao do registro.
+        /// </summary>
+        public DateTime? DataAtualizacao { get; private set; }
+
+        /// <summary>
+        /// Tipo do cliente.
+        /// </summary>
+        public abstract TipoCliente TipoCliente { get; }
+        #endregion
+
+        #region Constructors
+        /// <summary>
+        /// Construtor protegido para EF/materializacao.
+        /// </summary>
+        protected Customer()
+        {
+        }
+
+        /// <summary>
+        /// Inicializa uma nova instancia de <see cref="Customer"/> com identificador interno.
+        /// </summary>
+        /// <param name="email">Email principal.</param>
+        /// <param name="telefone">Telefone principal.</param>
+        /// <param name="endereco">Endereco principal.</param>
+        /// <exception cref="RequiredFieldException">Quando email, telefone ou endereco sao invalidos.</exception>
+        protected Customer(Email email, Telefone telefone, Endereco endereco)
+        {
+            if (email is null)
+                throw new RequiredFieldException(nameof(email));
+
+            if (telefone is null)
+                throw new RequiredFieldException(nameof(telefone));
+
+            if (endereco is null)
+                throw new RequiredFieldException(nameof(endereco));
+
+            Id = Guid.NewGuid();
+            Email = email;
+            Telefone = telefone;
+            Endereco = endereco;
+            DataCriacao = DateTime.UtcNow;
+        }
+        #endregion
+
+        #region Public Methods/Operators
+        /// <summary>
+        /// Retorna o documento principal do cliente.
+        /// </summary>
+        /// <returns>Documento principal.</returns>
+        public abstract string GetDocumento();
+
+        /// <summary>
+        /// Retorna o nome principal do cliente.
+        /// </summary>
+        /// <returns>Nome principal.</returns>
+        public abstract string GetNome();
+        #endregion
+    }
 }
-
-/// <summary>
-/// Cliente Pessoa Física
-/// </summary>
-public class ClientePessoaFisica : Customer
-{
-    public string Nome { get; set; } = string.Empty;
-    public string CPF { get; set; } = string.Empty;
-    public DateTime DataNascimento { get; set; }
-
-    public override string GetDocumento() => CPF;
-    public override string GetNome() => Nome;
-}
-
-/// <summary>
-/// Cliente Pessoa Jurídica
-/// </summary>
-public class ClientePessoaJuridica : Customer
-{
-    public string RazaoSocial { get; set; } = string.Empty;
-    public string NomeFantasia { get; set; } = string.Empty;
-    public string CNPJ { get; set; } = string.Empty;
-
-    public override string GetDocumento() => CNPJ;
-    public override string GetNome() => RazaoSocial;
-}
-

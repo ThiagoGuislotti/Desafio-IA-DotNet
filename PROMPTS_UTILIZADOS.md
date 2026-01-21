@@ -64,7 +64,7 @@ A arquitetura do projeto deve ser ajustada exatamente para o formato abaixo:
 ├── AGENTS.md
 ├── README.md
 ├── DESAFIO.md
-├── CRITERIOS_AVALIACAO.md
+├── CRITERIOS_Avaliação.md
 ├── TEMPLATE_ENTREGA.md
 ├── DECISOES_TECNICAS.md
 └── COMO_EXECUTAR.md
@@ -103,7 +103,7 @@ Todas as decisões e alinhamentos devem respeitar estritamente os seguintes arqu
 * .github/copilot-instructions.md
 * .github/instructions
 * DESAFIO.md
-* CRITERIOS_AVALIACAO.md
+* CRITERIOS_Avaliação.md
 
 ---
 
@@ -208,7 +208,184 @@ Criação dos documentos ARQUITETURA.md e PLANEJAMENTO.md, com definição da st
 ### Refinamentos Necessarios
 Nao se aplica
 
-### Avaliacao Pessoal
+### Avaliação Pessoal
 - [x] Bom - fiz pequenos ajustes
+
+---
+
+## Prompt #2
+
+### Contexto/Objetivo
+Implementar a Fase 2 (Domain) com organizacao do dominio, value objects, eventos, excecoes e testes unitarios/integracao basicos, conforme o planejamento.
+
+### Ferramenta Utilizada
+Codex (OpenAI)
+
+### Prompt Utilizado
+```
+## Implementação do Domain
+
+## Contexto Geral
+
+Este prompt corresponde à **Fase 2 do desafio**, conforme definido no `PLANEJAMENTO.md`.
+
+Nesta etapa, a IA **pode gerar código**, porém **exclusivamente na camada Domain e nos projetos de testes**, respeitando a arquitetura, o planejamento e as regras definidas no repositório.
+
+---
+
+## Objetivo da Fase
+
+- Organizar a camada Domain, separando classes existentes em arquivos individuais.
+- Implementar os componentes faltantes do domínio (ValueObjects, Enums, Events, Exceptions) se necessário.
+- Criar e estruturar os projetos de testes unitários e de integração.
+- Atualizar a documentação de arquitetura para refletir as decisões de testes.
+
+---
+
+## Regras Obrigatórias
+
+- Gerar código **somente** em:
+  - `src/CustomerPlatform.Domain`
+  - `tests/CustomerPlatform.UnitTests`
+  - `tests/CustomerPlatform.IntegrationTests`
+- Não implementar persistência, mensageria, busca, API ou Worker.
+- Domain não pode depender de EF Core, RabbitMQ, ElasticSearch ou qualquer SDK externo.
+- Não antecipar responsabilidades de outras camadas.
+- Seguir estritamente o que está definido em `ARQUITETURA.md` e `PLANEJAMENTO.md`.
+
+---
+
+## Escopo do Domain
+
+### Refatoração de código existente
+
+O projeto já possui entidades base de cliente no mesmo arquivo. Ajustar para:
+- Um arquivo por classe:
+  - `Customer.cs` (base/abstrata)
+  - `ClientePessoaFisica.cs`
+  - `ClientePessoaJuridica.cs`
+
+---
+
+### Estrutura mínima do Domain
+
+Garantir a existência das pastas:
+
+```
+Entities/
+ValueObjects/
+Enums/
+Events/
+Exceptions/
+```
+
+---
+
+### Implementações obrigatórias
+
+#### Enums
+- `TipoCliente`
+
+#### ValueObjects
+- `Documento` (CPF / CNPJ)
+- `Email`
+- `Telefone`
+- `Endereco`
+
+#### Events
+- `ClienteCriado`
+- `ClienteAtualizado`
+
+#### Exceptions
+- Exceções de negócio para validações inválidas
+
+---
+
+## Estrutura de Testes
+
+### Testes Unitários (xUnit)
+
+Projeto:
+
+```
+tests/CustomerPlatform.UnitTests/
+  Assets/
+  Tests/
+    Domain/
+      Entities/
+      ValueObjects/
+      Events/
+```
+
+Regras:
+- `Assets/` deve conter helpers, mocks, builders e utilitários de teste.
+- A estrutura em `Tests/Domain/` deve espelhar diretamente a organização do Domain.
+
+Cobertura mínima:
+- Validações e igualdade de ValueObjects
+- Criação válida e inválida de entidades
+- Consistência dos eventos de domínio
+
+---
+
+### Testes de Integração (NUnit)
+
+Projeto:
+
+```
+tests/CustomerPlatform.IntegrationTests/
+  Assets/
+  Tests/
+    Infrastructure/
+```
+
+Nesta fase, o projeto deve existir e estar configurado com NUnit, contendo ao menos um teste simples para validar o setup do runner.  
+As integrações reais serão implementadas nas fases posteriores.
+
+---
+
+## Atualização de Documentação
+
+- Atualizar `ARQUITETURA.md` para explicitar:
+  - xUnit para testes unitários
+  - NUnit para testes de integração
+  - Estrutura de pastas de testes (Assets + Tests/Domain)
+- Atualizar `PLANEJAMENTO.md`, marcando os itens concluídos da Fase 2.
+
+---
+
+## Resultado Esperado
+
+Ao final desta fase, o projeto deve conter:
+
+- Domain organizado e separado por arquivos
+- Componentes completos do domínio (ValueObjects, Enums, Events, Exceptions)
+- Projeto `CustomerPlatform.UnitTests` estruturado com xUnit
+- Projeto `CustomerPlatform.IntegrationTests` estruturado com NUnit (vazio)
+- Arquitetura atualizada refletindo as decisões de testes
+
+---
+
+## Observação Final
+
+Caso alguma regra de negócio não esteja claramente definida nos documentos do desafio,  
+registre a pendência no `PLANEJAMENTO.md` e **não implemente por suposição**.
+
+---
+```
+
+### Resultado Obtido
+Implementação do Domain com entidades PF/PJ, Value Objects, enums, events e exceções, criação dos projetos de testes unitários e de integração com estrutura inicial, atualização da arquitetura e do planejamento, e alinhamento das validações e testes com os padrões adotados nos projetos de referência do NetToolsKit.
+
+### Refinamentos Necessários
+1- Ajustadas as instruções globais para padronizar simplicidade de código, documentação XML e regras de validação conforme os projetos de referência.
+2- Simplificado o domínio com remoção da reidratação explícita e centralização da geração de identificadores.
+3- Ajustadas as validações de Email, Telefone, CPF e CNPJ seguindo os padrões já consolidados no NetToolsKit.
+4- Introduzidos Value Objects imutáveis e refinada a estrutura de testes para refletir a arquitetura.
+5- Aprimorada a estratégia de testes unitários com uso intensivo de TestCase para aumentar cobertura com menor duplicação de código.
+6- Simplificado o modelo de exceções do domínio, consolidando validações em exceções genéricas e reduzindo especializações desnecessárias.
+
+### Avaliação Pessoal
+- [x] Bom – fiz pequenos ajustes
 
 ---

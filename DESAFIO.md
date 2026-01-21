@@ -248,4 +248,3 @@ Esperado: Sistema detecta duplicata suspeita e gera evento
 5. **Documente Bem**: Um bom README vale ouro
 
 **Boa sorte! 🚀**
-

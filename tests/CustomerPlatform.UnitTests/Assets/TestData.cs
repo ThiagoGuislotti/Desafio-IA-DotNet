@@ -1,5 +1,3 @@
-using System;
-
 namespace CustomerPlatform.UnitTests.Assets
 {
     /// <summary>

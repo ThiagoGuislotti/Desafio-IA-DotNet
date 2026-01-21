@@ -1,6 +1,5 @@
-using System.Collections.Generic;
-using System.Text.RegularExpressions;
 using CustomerPlatform.Domain.Exceptions;
+using System.Text.RegularExpressions;
 
 namespace CustomerPlatform.Domain.ValueObjects
 {

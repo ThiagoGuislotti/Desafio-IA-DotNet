@@ -1,4 +1,3 @@
-using System;
 using CustomerPlatform.IntegrationTests.Assets;
 using NUnit.Framework;
 

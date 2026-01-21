@@ -1,4 +1,3 @@
-using System;
 using CustomerPlatform.Domain.Enums;
 using CustomerPlatform.Domain.Events;
 using CustomerPlatform.Domain.Exceptions;

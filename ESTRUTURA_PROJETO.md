@@ -125,4 +125,3 @@ Sugestão implícita no conteúdo: 6-8 horas para implementação completa.
 ## Contato
 
 Para dúvidas sobre o desafio, consulte os arquivos de documentação fornecidos.
-

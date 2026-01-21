@@ -200,4 +200,3 @@ Use a seção abaixo para documentar seus prompts:
 ---
 
 **Lembre-se: A qualidade da sua documentação de prompts é tão importante quanto o código que você entrega! 🚀**
-

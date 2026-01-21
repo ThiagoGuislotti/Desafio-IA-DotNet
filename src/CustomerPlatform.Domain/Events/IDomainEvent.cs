@@ -1,5 +1,3 @@
-using System;
-
 namespace CustomerPlatform.Domain.Events
 {
     /// <summary>

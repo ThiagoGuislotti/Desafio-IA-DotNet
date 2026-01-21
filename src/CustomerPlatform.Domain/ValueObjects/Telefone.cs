@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using System.Linq;
 using CustomerPlatform.Domain.Exceptions;
 
 namespace CustomerPlatform.Domain.ValueObjects

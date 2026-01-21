@@ -66,4 +66,3 @@ volumes:
 networks:
   customerplatform-network:
     driver: bridge
-

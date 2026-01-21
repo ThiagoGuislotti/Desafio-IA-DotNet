@@ -132,4 +132,3 @@ Este desafio avalia sua capacidade de:
 - Entregar software funcional e bem estruturado
 
 **Boa sorte! 🚀**
-

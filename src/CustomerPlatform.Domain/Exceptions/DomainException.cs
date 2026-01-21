@@ -1,5 +1,3 @@
-using System;
-
 namespace CustomerPlatform.Domain.Exceptions
 {
     /// <summary>

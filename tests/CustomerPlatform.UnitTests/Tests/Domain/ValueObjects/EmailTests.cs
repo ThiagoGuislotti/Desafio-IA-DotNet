@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using CustomerPlatform.Domain.Exceptions;
 using CustomerPlatform.Domain.ValueObjects;
 using CustomerPlatform.UnitTests.Assets;

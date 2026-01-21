@@ -93,5 +93,30 @@ namespace CustomerPlatform.Domain.Entities
         /// <returns>Nome principal.</returns>
         public abstract string GetNome();
         #endregion
+
+        #region Protected Methods/Operators
+        /// <summary>
+        /// Atualiza dados de contato do cliente.
+        /// </summary>
+        /// <param name="email">Email principal.</param>
+        /// <param name="telefone">Telefone principal.</param>
+        /// <param name="endereco">Endereco principal.</param>
+        protected void AtualizarContato(Email email, Telefone telefone, Endereco endereco)
+        {
+            if (email is null)
+                throw new RequiredFieldException(nameof(email));
+
+            if (telefone is null)
+                throw new RequiredFieldException(nameof(telefone));
+
+            if (endereco is null)
+                throw new RequiredFieldException(nameof(endereco));
+
+            Email = email;
+            Telefone = telefone;
+            Endereco = endereco;
+            DataAtualizacao = DateTime.UtcNow;
+        }
+        #endregion
     }
 }

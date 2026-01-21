@@ -114,5 +114,94 @@ namespace CustomerPlatform.UnitTests.Tests.Domain.Entities
             Assert.NotNull(ex);
         }
         #endregion
+
+        #region Test Methods - Atualizar Valid Cases
+        [Fact]
+        public void Atualizar_DadosValidos_DeveAtualizarCliente()
+        {
+            // Arrange
+            var cliente = ClientePessoaJuridica.Criar(
+                TestData.RazaoSocial,
+                TestData.NomeFantasia,
+                TestData.CnpjValido,
+                TestData.EmailValido,
+                TestData.TelefoneValido,
+                _enderecoValido);
+
+            var enderecoAtualizado = new Endereco(
+                "Rua B",
+                "200",
+                "Sala 10",
+                "02002000",
+                "Rio de Janeiro",
+                "RJ");
+
+            // Act
+            cliente.Atualizar(
+                "Empresa Atualizada Ltda",
+                "Empresa Atualizada",
+                "contato@empresa.com",
+                "11988887777",
+                enderecoAtualizado);
+
+            // Assert
+            Assert.Equal("Empresa Atualizada Ltda", cliente.RazaoSocial);
+            Assert.Equal("Empresa Atualizada", cliente.NomeFantasia);
+            Assert.Equal("contato@empresa.com", cliente.Email.Endereco);
+            Assert.Equal("11988887777", cliente.Telefone.Numero);
+            Assert.Equal("Rua B", cliente.Endereco.Logradouro);
+            Assert.NotNull(cliente.DataAtualizacao);
+        }
+        #endregion
+
+        #region Test Methods - Atualizar Invalid Cases
+        [Fact]
+        public void Atualizar_EmailInvalido_DeveLancarExcecao()
+        {
+            // Arrange
+            var cliente = ClientePessoaJuridica.Criar(
+                TestData.RazaoSocial,
+                TestData.NomeFantasia,
+                TestData.CnpjValido,
+                TestData.EmailValido,
+                TestData.TelefoneValido,
+                _enderecoValido);
+
+            // Act
+            var ex = Assert.Throws<InvalidValueException>(() => cliente.Atualizar(
+                TestData.RazaoSocial,
+                TestData.NomeFantasia,
+                "email@",
+                TestData.TelefoneValido,
+                _enderecoValido));
+
+            // Assert
+            Assert.NotNull(ex);
+        }
+
+        [Fact]
+        public void Atualizar_RazaoSocialVazia_DeveLancarExcecao()
+        {
+            // Arrange
+            var cliente = ClientePessoaJuridica.Criar(
+                TestData.RazaoSocial,
+                TestData.NomeFantasia,
+                TestData.CnpjValido,
+                TestData.EmailValido,
+                TestData.TelefoneValido,
+                _enderecoValido);
+
+            // Act
+            var ex = Assert.Throws<RequiredFieldException>(() => cliente.Atualizar(
+                string.Empty,
+                TestData.NomeFantasia,
+                TestData.EmailValido,
+                TestData.TelefoneValido,
+                _enderecoValido));
+
+            // Assert
+            Assert.NotNull(ex);
+        }
+        #endregion
     }
 }

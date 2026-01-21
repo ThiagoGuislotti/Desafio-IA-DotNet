@@ -389,3 +389,123 @@ Implementação do Domain com entidades PF/PJ, Value Objects, enums, events e ex
 - [x] Bom – fiz pequenos ajustes
 
 ---
+
+## Prompt #3
+
+### Contexto/Objetivo
+Implementar a Fase 3 (Application) aplicando CQRS e Unit of Work, com validações simples de entrada, handlers organizados por entidade e testes unitários, conforme o planejamento e a arquitetura definida.
+
+### Ferramenta Utilizada
+Codex (OpenAI)
+
+### Prompt Utilizado
+```
+# Implementacao da Camada Application (CQRS + Unit of Work + Testes)
+
+## Contexto Geral
+
+Este prompt corresponde a **Fase 3 do desafio**, conforme definido no `PLANEJAMENTO.md`.
+
+Nesta etapa, a IA pode gerar codigo, porem **exclusivamente** na camada **Application** e nos **testes unitarios** relacionados, respeitando a arquitetura, o planejamento e as instrucoes do repositorio.
+
+---
+
+## Referencias Obrigatorias (projetos do workspace)
+
+Utilizar como referencia de padroes e estrutura os seguintes projetos:
+
+- NetToolsKit\samples\src\Rent.Service.Application
+- NetToolsKit\samples\tests\Rent.Service.UnitTests
+- NetToolsKit\samples\tests\Rent.Service.IntegrationTests
+- NetToolsKit\src\NetToolsKit.Data
+- NetToolsKit\src\NetToolsKit.Data.EntityFrameworkCore
+
+---
+
+## Objetivo da Fase
+
+- Criar o projeto `CustomerPlatform.Application` com estrutura de CQRS, abstracoes e DI.
+- Implementar comandos, queries, handlers e validacoes.
+- Implementar o padrao Unit of Work como abstracao.
+- Criar testes unitarios para handlers e validacoes.
+- Atualizar o planejamento e registrar este prompt.
+
+---
+
+## Regras Obrigatorias
+
+- Gerar codigo somente em:
+  - `src/CustomerPlatform.Application`
+  - `tests/CustomerPlatform.UnitTests`
+- Nao implementar infraestrutura nesta fase.
+- Nao usar AutoMapper.
+- Manter simplicidade e clareza.
+
+---
+
+## Estrutura Esperada
+
+```
+src/CustomerPlatform.Application/
+  Abstractions/
+  Cqrs/
+  DTOs/
+  Validators/
+  DependencyInjections/
+```
+
+---
+
+## Validacoes na Application (importante)
+
+Nesta fase, os **Validators** devem validar apenas aspectos de entrada simples, como:
+- campo obrigatorio (null, vazio, whitespace)
+- limites minimos/maximos de tamanho
+- consistencia trivial (ex.: paginacao > 0)
+
+Nao implementar validacoes profundas de negocio (ex.: algoritmo de CPF/CNPJ, formato completo de email, normalizacao avancada de telefone).
+Essas validacoes pertencem ao **Domain** (Value Objects e regras do dominio).
+
+---
+
+## Testes
+
+- Framework: xUnit
+- Priorizar uso de Theory/TestCase para maior cobertura com menos codigo.
+- Usar **Moq** quando for necessario mockar abstracoes (repositorios, unit of work, message bus, search).
+- Usar **Bogus** apenas se for util para gerar massa de dados consistente (evitar complexidade desnecessaria).
+
+Cobertura minima:
+- Validators: obrigatorio + limites simples
+- Handlers: fluxo principal + falhas de validacao + falhas do dominio (quando Value Objects lancarem excecao)
+
+---
+
+## Documentacao
+
+- Atualizar `PLANEJAMENTO.md`
+- Registrar Prompt #3 em `PROMPTS_UTILIZADOS.md`
+- Registrar decisoes tecnicas relevantes.
+
+---
+
+## Resultado Esperado
+
+- Application estruturado com CQRS e UoW.
+- Validacoes simples (obrigatorio/limites) e handlers testados.
+- Base pronta para a Fase 4 (Infrastructure).
+```
+
+### Resultado Obtido
+Criação do projeto CustomerPlatform.Application com CQRS, abstrações de leitura e escrita via Unit of Work, uso de Result para retorno de operações, handlers organizados por entidade, validações simples de entrada e testes unitários para validators e handlers, além da atualização do planejamento e registro das decisões técnicas.
+
+### Refinamentos Necessários
+1- Ajustados contratos de Application para alinhar com o padrão do NetToolsKit (Result, Unit of Work responsável por criar repositórios e repositórios genéricos para leitura).
+2- Incluída separação clara entre escrita no PostgreSQL e leitura via Elastic, com indexação assíncrona disparada por eventos.
+3- Complementados comandos e handlers para suportar atualização de cliente e padronizada a organização de CQRS por entidade.
+4- Ajustados testes unitários para maior cobertura com menor duplicação, utilizando mocks e dados gerados quando necessário.
+
+### Avaliação Pessoal
+- [x] Bom – fiz pequenos ajustes
+
+---

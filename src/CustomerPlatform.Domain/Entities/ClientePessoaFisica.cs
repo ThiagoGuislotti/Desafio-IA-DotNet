@@ -87,6 +87,29 @@ namespace CustomerPlatform.Domain.Entities
                 endereco);
         }
 
+        /// <summary>
+        /// Atualiza dados do cliente pessoa fisica.
+        /// </summary>
+        /// <param name="nome">Nome completo.</param>
+        /// <param name="email">Email do cliente.</param>
+        /// <param name="telefone">Telefone do cliente.</param>
+        /// <param name="dataNascimento">Data de nascimento.</param>
+        /// <param name="endereco">Endereco do cliente.</param>
+        public void Atualizar(
+            string nome,
+            string email,
+            string telefone,
+            DateOnly dataNascimento,
+            Endereco endereco)
+        {
+            var emailValue = new Email(email);
+            var telefoneValue = new Telefone(telefone);
+
+            Nome = ValidarNome(nome);
+            DataNascimento = ValidarDataNascimento(dataNascimento);
+            AtualizarContato(emailValue, telefoneValue, endereco);
+        }
+
         /// <inheritdoc />
         public override string GetDocumento()
         {

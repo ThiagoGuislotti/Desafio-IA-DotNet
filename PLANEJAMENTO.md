@@ -20,10 +20,10 @@ Fase 2 - Dominio
 - [x] Registrar Prompt #2 em `PROMPTS_UTILIZADOS.md`.
 
 Fase 3 - Application
-- [ ] Criar `CustomerPlatform.Application` com Cqrs/, Abstractions/ e DependencyInjections/.
-- [ ] Implementar comandos, queries, handlers e validacoes.
-- [ ] Criar testes unitarios para handlers e validacoes.
-- [ ] Registrar Prompt #3 em `PROMPTS_UTILIZADOS.md`.
+- [x] Criar `CustomerPlatform.Application` com Cqrs/, Abstractions/ e DependencyInjections/.
+- [x] Implementar comandos, queries, handlers e validacoes.
+- [x] Criar testes unitarios para handlers e validacoes.
+- [x] Registrar Prompt #3 em `PROMPTS_UTILIZADOS.md`.
 
 Fase 4 - Infrastructure
 - [ ] Implementar DbContext, migrations e repositorios (PostgreSQL).
@@ -54,7 +54,8 @@ Dominio
 - [x] Pastas Enums, ValueObjects, Events e Exceptions existem.
 
 Aplicacao
-- [ ] `src/CustomerPlatform.Application` nao existe.
+- [x] `src/CustomerPlatform.Application` existe com CQRS, DTOs, validadores e DI.
+- [x] Testes unitarios da Application em `tests/CustomerPlatform.UnitTests/Tests/Application`.
 
 Infraestrutura
 - [x] Projeto `src/CustomerPlatform.Infrastructure` existe (vazio).
@@ -79,7 +80,8 @@ Docker
 
 Docs
 - [x] README.md, DESAFIO.md, TEMPLATE_ENTREGA.md, ESTRUTURA_PROJETO.md existem.
-- [ ] CRITERIOS_AVALIACAO.md, DECISOES_TECNICAS.md, COMO_EXECUTAR.md faltam.
+- [x] DECISOES_TECNICAS.md existe.
+- [ ] CRITERIOS_AVALIACAO.md e COMO_EXECUTAR.md faltam.
 - [x] PROMPTS_UTILIZADOS.md existe.
 - [x] ARQUITETURA.md existe.
 - [x] PLANEJAMENTO.md existe.

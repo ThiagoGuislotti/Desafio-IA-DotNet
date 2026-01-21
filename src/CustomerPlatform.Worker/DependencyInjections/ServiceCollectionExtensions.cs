@@ -4,8 +4,6 @@ using CustomerPlatform.Infrastructure.Messaging;
 using CustomerPlatform.Infrastructure.Search;
 using CustomerPlatform.Worker.HostedServices;
 using CustomerPlatform.Worker.Resilience;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CustomerPlatform.Worker.DependencyInjections
 {

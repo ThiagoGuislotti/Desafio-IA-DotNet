@@ -1,7 +1,6 @@
 using CustomerPlatform.Application.Abstractions.Results;
 using CustomerPlatform.Application.Abstractions.Search;
 using CustomerPlatform.Application.Abstractions.Validation;
-using CustomerPlatform.Application.Cqrs.Queries;
 using CustomerPlatform.Application.DTOs;
 using MediatR;
 

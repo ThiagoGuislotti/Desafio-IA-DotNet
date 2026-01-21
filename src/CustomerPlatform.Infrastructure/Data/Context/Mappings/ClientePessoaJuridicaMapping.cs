@@ -1,5 +1,4 @@
 using CustomerPlatform.Domain.Entities;
-using CustomerPlatform.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 

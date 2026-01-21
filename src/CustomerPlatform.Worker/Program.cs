@@ -1,7 +1,6 @@
 using CustomerPlatform.Infrastructure.DependencyInjections;
 using CustomerPlatform.Infrastructure.Observability;
 using CustomerPlatform.Worker.DependencyInjections;
-using Microsoft.Extensions.Hosting;
 
 var builder = Host.CreateApplicationBuilder(args);
 

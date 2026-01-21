@@ -2,7 +2,6 @@ using CustomerPlatform.Application.Abstractions;
 using CustomerPlatform.Application.Abstractions.Messaging;
 using CustomerPlatform.Application.Abstractions.Results;
 using CustomerPlatform.Application.Abstractions.Validation;
-using CustomerPlatform.Application.Cqrs.Commands;
 using CustomerPlatform.Application.DTOs;
 using CustomerPlatform.Domain.Entities;
 using CustomerPlatform.Domain.Events;

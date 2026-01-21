@@ -1,9 +1,9 @@
-using ApplicationResult = CustomerPlatform.Application.Abstractions.Results.Result;
 using CustomerPlatform.Application.Abstractions.Search;
 using CustomerPlatform.Application.DTOs;
 using Elastic.Clients.Elasticsearch;
 using Elastic.Clients.Elasticsearch.QueryDsl;
 using Microsoft.Extensions.Options;
+using ApplicationResult = CustomerPlatform.Application.Abstractions.Results.Result;
 
 namespace CustomerPlatform.Infrastructure.Search
 {

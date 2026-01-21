@@ -1,4 +1,5 @@
 using CustomerPlatform.Application.Abstractions;
+using CustomerPlatform.Application.Abstractions.Messaging;
 using CustomerPlatform.Application.Abstractions.Repositories;
 using CustomerPlatform.Application.Abstractions.Results;
 using CustomerPlatform.Application.Abstractions.Validation;
@@ -6,10 +7,9 @@ using CustomerPlatform.Application.Cqrs.Commands;
 using CustomerPlatform.Application.Cqrs.Commands.Handlers;
 using CustomerPlatform.Application.DTOs;
 using CustomerPlatform.Domain.Entities;
-using CustomerPlatform.Domain.Events;
 using CustomerPlatform.Domain.Enums;
+using CustomerPlatform.Domain.Events;
 using CustomerPlatform.Domain.ValueObjects;
-using CustomerPlatform.Application.Abstractions.Messaging;
 using CustomerPlatform.UnitTests.Assets;
 using Moq;
 using System.Linq.Expressions;

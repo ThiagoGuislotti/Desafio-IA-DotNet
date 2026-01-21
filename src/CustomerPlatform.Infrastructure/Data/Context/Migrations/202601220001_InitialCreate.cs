@@ -1,4 +1,3 @@
-using System;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace CustomerPlatform.Infrastructure.Data.Context.Migrations

@@ -3,7 +3,6 @@ using CustomerPlatform.Infrastructure.DependencyInjections;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using System.IO;
 
 namespace CustomerPlatform.IntegrationTests.Assets
 {
@@ -30,12 +29,8 @@ namespace CustomerPlatform.IntegrationTests.Assets
         /// </summary>
         public ConfigureServices()
         {
-            var basePath = Directory.GetCurrentDirectory();
-            if (!File.Exists(Path.Combine(basePath, "appsettings.json")))
-                basePath = AppContext.BaseDirectory;
-
             Configuration = new ConfigurationBuilder()
-                .SetBasePath(basePath)
+                .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
                 .AddEnvironmentVariables()
                 .Build();

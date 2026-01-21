@@ -1,8 +1,5 @@
 using CustomerPlatform.Domain.Events;
 using CustomerPlatform.Infrastructure.Messaging;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace CustomerPlatform.Worker.HostedServices

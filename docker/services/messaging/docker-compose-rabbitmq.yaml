@@ -1,8 +1,9 @@
-services:
+version: "3.8"
 
+services:
   rabbitmq:
-    # https://bitnami.com
-    image: bitnamilegacy/rabbitmq:latest
+    # https://www.rabbitmq.com
+    image: rabbitmq:3.13.1-management
     hostname: rabbitmq
     container_name: rabbitmq-${COMPOSE_PROJECT_NAME}
     restart: always
@@ -14,33 +15,31 @@ services:
     networks:
       - nginxproxy
     healthcheck:
-      test: "rabbitmq-diagnostics check_port_connectivity"
+      test: ["CMD-SHELL", "rabbitmq-diagnostics check_port_connectivity"]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 10s
     ports:
-      - 4369:4369
-      - 5551:5551
-      - 5552:5552
-      - 5672:5672
-      - 15672:15672 # communication with the web management API 
-      - 25672:25672 # (erlang) communication between the nodes and CLI tool
+      - "4369:4369"
+      - "5551:5551"
+      - "5552:5552"
+      - "5672:5672"
+      - "15672:15672"
+      - "25672:25672"
     volumes:
-       - rabbitmq-data:/bitnami
-       - ./rabbitmq/definitions.json:/opt/definitions.json:ro
-       - ./rabbitmq/advanced.config:/etc/rabbitmq/advanced.config:ro
+      - rabbitmq-data:/var/lib/rabbitmq
+      - ./rabbitmq/definitions.json:/etc/rabbitmq/definitions.json:ro
+      - ./rabbitmq/advanced.config:/etc/rabbitmq/advanced.config:ro
     environment:
-      VIRTUAL_HOST: rabbitmq
-      VIRTUAL_PORT: 15672
-      RABBITMQ_NODE_PORT_NUMBER: 5672     
-      RABBITMQ_MANAGEMENT_PORT_NUMBER: 15672
-      RABBITMQ_MANAGEMENT_ALLOW_WEB_ACCESS: true
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_DEFAULT_USER}
       RABBITMQ_DEFAULT_PASS: ${RABBITMQ_DEFAULT_PASS}
-      
+
 networks:
   nginxproxy:
+    name: nginxproxy
+    driver: bridge
 
 volumes:
   rabbitmq-data:
+    name: rabbitmq-data

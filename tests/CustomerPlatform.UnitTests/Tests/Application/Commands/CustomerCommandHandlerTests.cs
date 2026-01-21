@@ -1,5 +1,4 @@
 using CustomerPlatform.Application.Abstractions;
-using CustomerPlatform.Application.Abstractions.Messaging;
 using CustomerPlatform.Application.Abstractions.Repositories;
 using CustomerPlatform.Application.Abstractions.Results;
 using CustomerPlatform.Application.Abstractions.Validation;
@@ -10,6 +9,7 @@ using CustomerPlatform.Domain.Entities;
 using CustomerPlatform.Domain.Events;
 using CustomerPlatform.Domain.Enums;
 using CustomerPlatform.Domain.ValueObjects;
+using CustomerPlatform.Application.Abstractions.Messaging;
 using CustomerPlatform.UnitTests.Assets;
 using Moq;
 using System.Linq.Expressions;
@@ -23,7 +23,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
         #region Variables
         private readonly Mock<IRepository<Customer>> _repository;
         private readonly Mock<IUnitOfWork> _unitOfWork;
-        private readonly Mock<IEventPublisher> _eventPublisher;
+        private readonly Mock<IOutboxWriter> _outboxWriter;
         private readonly Mock<IValidator<CreateIndividualCustomerCommand>> _individualValidator;
         private readonly Mock<IValidator<CreateCompanyCustomerCommand>> _companyValidator;
         private readonly Mock<IValidator<UpdateIndividualCustomerCommand>> _updateIndividualValidator;
@@ -36,7 +36,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
         {
             _repository = new Mock<IRepository<Customer>>();
             _unitOfWork = new Mock<IUnitOfWork>();
-            _eventPublisher = new Mock<IEventPublisher>();
+            _outboxWriter = new Mock<IOutboxWriter>();
             _individualValidator = new Mock<IValidator<CreateIndividualCustomerCommand>>();
             _companyValidator = new Mock<IValidator<CreateCompanyCustomerCommand>>();
             _updateIndividualValidator = new Mock<IValidator<UpdateIndividualCustomerCommand>>();
@@ -44,13 +44,13 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
 
             _unitOfWork.Setup(unitOfWork => unitOfWork.GetRepository<Customer>())
                 .Returns(_repository.Object);
-            _eventPublisher
-                .Setup(publisher => publisher.PublishAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()))
+            _outboxWriter
+                .Setup(writer => writer.EnqueueAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
 
             _handler = new CustomerCommandHandler(
                 _unitOfWork.Object,
-                _eventPublisher.Object,
+                _outboxWriter.Object,
                 _individualValidator.Object,
                 _companyValidator.Object,
                 _updateIndividualValidator.Object,
@@ -89,8 +89,8 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
             _repository.Verify(
                 repository => repository.InsertAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()),
                 Times.Once);
-            _eventPublisher.Verify(
-                publisher => publisher.PublishAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
+            _outboxWriter.Verify(
+                writer => writer.EnqueueAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             _unitOfWork.Verify(
                 unitOfWork => unitOfWork.CommitAsync(It.IsAny<CancellationToken>()),
@@ -116,8 +116,8 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
             _repository.Verify(
                 repository => repository.InsertAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()),
                 Times.Never);
-            _eventPublisher.Verify(
-                publisher => publisher.PublishAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
+            _outboxWriter.Verify(
+                writer => writer.EnqueueAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
                 Times.Never);
         }
 
@@ -138,8 +138,42 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
             _repository.Verify(
                 repository => repository.InsertAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()),
                 Times.Never);
-            _eventPublisher.Verify(
-                publisher => publisher.PublishAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
+            _outboxWriter.Verify(
+                writer => writer.EnqueueAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
+                Times.Never);
+        }
+        #endregion
+
+        #region Test Methods - Handle CreateIndividualCustomerCommand Exception Cases
+        [Fact]
+        public async Task Handle_CreateIndividualCustomerCommand_OutboxFailure_ShouldReturnFailure()
+        {
+            var command = CreateValidIndividualCommand();
+
+            _individualValidator
+                .Setup(validator => validator.Validate(It.IsAny<CreateIndividualCustomerCommand>()))
+                .Returns(ValidationResult.Success());
+            _repository
+                .Setup(repository => repository.SearchFirstOrDefaultAsync(
+                    It.IsAny<Func<IQueryable<Customer>, IOrderedQueryable<Customer>>>(),
+                    It.IsAny<Expression<Func<Customer, bool>>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync((Customer?)null);
+            _repository
+                .Setup(repository => repository.InsertAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(Result.Success());
+            _outboxWriter
+                .Setup(writer => writer.EnqueueAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()))
+                .ThrowsAsync(new InvalidOperationException("Falha outbox"));
+
+            var result = await _handler.Handle(command, CancellationToken.None);
+
+            Assert.False(result.IsSuccess);
+            _outboxWriter.Verify(
+                writer => writer.EnqueueAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
+                Times.Once);
+            _unitOfWork.Verify(
+                unitOfWork => unitOfWork.CommitAsync(It.IsAny<CancellationToken>()),
                 Times.Never);
         }
         #endregion
@@ -175,8 +209,8 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
             _repository.Verify(
                 repository => repository.InsertAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()),
                 Times.Once);
-            _eventPublisher.Verify(
-                publisher => publisher.PublishAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
+            _outboxWriter.Verify(
+                writer => writer.EnqueueAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
                 Times.Once);
             _unitOfWork.Verify(
                 unitOfWork => unitOfWork.CommitAsync(It.IsAny<CancellationToken>()),
@@ -202,8 +236,8 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
             _repository.Verify(
                 repository => repository.InsertAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()),
                 Times.Never);
-            _eventPublisher.Verify(
-                publisher => publisher.PublishAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
+            _outboxWriter.Verify(
+                writer => writer.EnqueueAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
                 Times.Never);
         }
 
@@ -224,8 +258,8 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
             _repository.Verify(
                 repository => repository.InsertAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()),
                 Times.Never);
-            _eventPublisher.Verify(
-                publisher => publisher.PublishAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
+            _outboxWriter.Verify(
+                writer => writer.EnqueueAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
                 Times.Never);
         }
         #endregion
@@ -258,8 +292,8 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
             _repository.Verify(
                 repository => repository.UpdateAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()),
                 Times.Once);
-            _eventPublisher.Verify(
-                publisher => publisher.PublishAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
+            _outboxWriter.Verify(
+                writer => writer.EnqueueAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
                 Times.Once);
         }
         #endregion
@@ -379,8 +413,8 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
             _repository.Verify(
                 repository => repository.UpdateAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()),
                 Times.Once);
-            _eventPublisher.Verify(
-                publisher => publisher.PublishAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
+            _outboxWriter.Verify(
+                writer => writer.EnqueueAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()),
                 Times.Once);
         }
         #endregion

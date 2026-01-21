@@ -1,12 +1,14 @@
-services:
+version: "3.8"
 
+services:
   worker:
+    image: customerplatform-worker:${VERSION_CORE}
     build:
       context: ..
       dockerfile: src/CustomerPlatform.Worker/Dockerfile
       args:
         VERSION_CORE: ${VERSION_CORE}
-    image: customerplatform-worker:${VERSION_CORE}
+    hostname: worker
     container_name: worker-${COMPOSE_PROJECT_NAME}
     restart: always
     deploy:
@@ -16,10 +18,17 @@ services:
           memory: "4GB"
     networks:
       - nginxproxy
+    healthcheck:
+      test: ["CMD-SHELL", "test -f /app/CustomerPlatform.Worker.dll || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     env_file:
       - env/connectionStrings.otlp.env
       - env/connectionStrings.postgres.env
       - env/connectionStrings.rabbitmq.env
+      - env/connectionStrings.elasticsearch.env
       - env/minio.env
       - env/serilog.env
     environment:
@@ -28,3 +37,5 @@ services:
 
 networks:
   nginxproxy:
+    name: nginxproxy
+    driver: bridge

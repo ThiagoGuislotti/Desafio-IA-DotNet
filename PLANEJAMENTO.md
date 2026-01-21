@@ -26,24 +26,28 @@ Fase 3 - Application
 - [x] Registrar Prompt #3 em `PROMPTS_UTILIZADOS.md`.
 
 Fase 4 - Infrastructure
-- [ ] Implementar DbContext, migrations e repositorios (PostgreSQL).
-- [ ] Implementar RabbitMQ (publicacao/consumo) com resiliencia.
-- [ ] Implementar Search (ElasticSearch) e indexacao.
-- [ ] Implementar Deduplicacao com score e suspeitas.
-- [ ] Configurar Serilog e OpenTelemetry.
-- [ ] Criar testes de integracao para DB, RabbitMQ e Search.
-- [ ] Registrar Prompt #4 em `PROMPTS_UTILIZADOS.md`.
+- [x] Implementar DbContext, migrations e repositorios (PostgreSQL).
+- [x] Implementar Outbox (tabela, escrita e migrations).
+- [x] Implementar RabbitMQ (publicacao/consumo) com resiliencia.
+- [x] Implementar Search (ElasticSearch) e indexacao.
+- [x] Implementar Deduplicacao com score e suspeitas.
+- [x] Configurar Serilog e OpenTelemetry.
+- [x] Ajustar docker compose (servicos, healthcheck, imagens fixas).
+- [x] Criar testes de integracao para DB, RabbitMQ e Search.
+- [x] Registrar Prompt #4 em `PROMPTS_UTILIZADOS.md`.
 
 Fase 5 - API e Worker
 - [ ] Implementar controllers REST (CRUD + busca probabilistica).
 - [ ] Implementar ProblemDetails, correlationId e health checks.
-- [ ] Criar Worker e consumidores de eventos para deduplicacao.
+- [x] Substituir publicacao direta por Outbox (Application).
+- [x] Criar Worker e consumidores de eventos para deduplicacao.
+- [x] Aplicar resiliencia no Worker (RabbitMQ/Elastic).
 - [ ] Criar testes de integracao de API e fluxo de eventos do Worker.
-- [ ] Registrar Prompt #5 em `PROMPTS_UTILIZADOS.md`.
+- [x] Registrar Prompt #5 em `PROMPTS_UTILIZADOS.md`.
 
 Fase 6 - Testes, Docker e Docs
-- [ ] Criar UnitTests e IntegrationTests com Ductus.FluentDocker.
-- [ ] Ajustar docker compose para PostgreSQL, RabbitMQ, Search e observabilidade.
+- [x] Criar UnitTests e IntegrationTests com Ductus.FluentDocker.
+- [x] Ajustar docker compose para PostgreSQL, RabbitMQ, Search e observabilidade.
 - [ ] Atualizar README/COMO_EXECUTAR e preencher DECISOES_TECNICAS e PROMPTS_UTILIZADOS.
 - [ ] Registrar Prompt #6 em `PROMPTS_UTILIZADOS.md`.
 
@@ -58,8 +62,11 @@ Aplicacao
 - [x] Testes unitarios da Application em `tests/CustomerPlatform.UnitTests/Tests/Application`.
 
 Infraestrutura
-- [x] Projeto `src/CustomerPlatform.Infrastructure` existe (vazio).
-- [ ] Persistencia, message bus, deduplicacao, search e DI estao faltando.
+- [x] Projeto `src/CustomerPlatform.Infrastructure` existe com persistencia (EF Core).
+- [x] Mensageria RabbitMQ (publicacao/consumo) e outbox configurados.
+- [x] ElasticSearch para leitura e indexacao assincrona.
+- [x] Deduplicacao com score e registro de suspeitas.
+- [x] Observabilidade (Serilog + OpenTelemetry) configurada.
 
 API
 - [x] `src/CustomerPlatform.Api` existe com HealthController e Swagger.
@@ -67,7 +74,7 @@ API
 - [ ] Endpoints de clientes, validacoes e observabilidade estao faltando.
 
 Worker
-- [ ] `src/CustomerPlatform.Worker` nao existe.
+- [x] `src/CustomerPlatform.Worker` existe com HostedServices para outbox e consumo.
 
 Testes
 - [x] `tests/CustomerPlatform.Tests` existe (legado).
@@ -76,6 +83,7 @@ Testes
 
 Docker
 - [x] Pasta `docker/` com compose files existe.
+- [x] Composes de Postgres, RabbitMQ, Elastic e observabilidade atualizados.
 - [x] `docker-compose.exemplo.yml` existe.
 
 Docs

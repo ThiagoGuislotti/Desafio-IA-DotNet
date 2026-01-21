@@ -23,7 +23,7 @@ namespace CustomerPlatform.Application.Cqrs.Commands.Handlers
     {
         #region Variables
         private readonly IUnitOfWork _unitOfWork;
-        private readonly IEventPublisher _eventPublisher;
+        private readonly IOutboxWriter _outboxWriter;
         private readonly IValidator<CreateIndividualCustomerCommand> _individualValidator;
         private readonly IValidator<CreateCompanyCustomerCommand> _companyValidator;
         private readonly IValidator<UpdateIndividualCustomerCommand> _updateIndividualValidator;
@@ -35,21 +35,21 @@ namespace CustomerPlatform.Application.Cqrs.Commands.Handlers
         /// Construtor.
         /// </summary>
         /// <param name="unitOfWork">Unidade de trabalho.</param>
-        /// <param name="eventPublisher">Publicador de eventos.</param>
+        /// <param name="outboxWriter">Escrita da outbox.</param>
         /// <param name="individualValidator">Validador para PF.</param>
         /// <param name="companyValidator">Validador para PJ.</param>
         /// <param name="updateIndividualValidator">Validador de atualizacao para PF.</param>
         /// <param name="updateCompanyValidator">Validador de atualizacao para PJ.</param>
         public CustomerCommandHandler(
             IUnitOfWork unitOfWork,
-            IEventPublisher eventPublisher,
+            IOutboxWriter outboxWriter,
             IValidator<CreateIndividualCustomerCommand> individualValidator,
             IValidator<CreateCompanyCustomerCommand> companyValidator,
             IValidator<UpdateIndividualCustomerCommand> updateIndividualValidator,
             IValidator<UpdateCompanyCustomerCommand> updateCompanyValidator)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
-            _eventPublisher = eventPublisher ?? throw new ArgumentNullException(nameof(eventPublisher));
+            _outboxWriter = outboxWriter ?? throw new ArgumentNullException(nameof(outboxWriter));
             _individualValidator = individualValidator ?? throw new ArgumentNullException(nameof(individualValidator));
             _companyValidator = companyValidator ?? throw new ArgumentNullException(nameof(companyValidator));
             _updateIndividualValidator = updateIndividualValidator ?? throw new ArgumentNullException(nameof(updateIndividualValidator));
@@ -196,11 +196,7 @@ namespace CustomerPlatform.Application.Cqrs.Commands.Handlers
                 if (!updateResult.IsSuccess)
                     return Result<CustomerDto>.Failure(updateResult.Errors, updateResult.Message);
 
-                var commitResult = await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
-                if (!commitResult.IsSuccess)
-                    return Result<CustomerDto>.Failure(commitResult.Errors, commitResult.Message);
-
-                var publishResult = await PublishEventAsync(
+                var enqueueResult = await EnqueueEventAsync(
                         new ClienteAtualizado(
                             individual.Id,
                             individual.TipoCliente,
@@ -209,8 +205,12 @@ namespace CustomerPlatform.Application.Cqrs.Commands.Handlers
                         cancellationToken)
                     .ConfigureAwait(false);
 
-                if (!publishResult.IsSuccess)
-                    return Result<CustomerDto>.Failure(publishResult.Errors, publishResult.Message);
+                if (!enqueueResult.IsSuccess)
+                    return Result<CustomerDto>.Failure(enqueueResult.Errors, enqueueResult.Message);
+
+                var commitResult = await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
+                if (!commitResult.IsSuccess)
+                    return Result<CustomerDto>.Failure(commitResult.Errors, commitResult.Message);
 
                 return Result<CustomerDto>.Success(CustomerDtoMapper.Map(individual));
             }
@@ -272,11 +272,7 @@ namespace CustomerPlatform.Application.Cqrs.Commands.Handlers
                 if (!updateResult.IsSuccess)
                     return Result<CustomerDto>.Failure(updateResult.Errors, updateResult.Message);
 
-                var commitResult = await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
-                if (!commitResult.IsSuccess)
-                    return Result<CustomerDto>.Failure(commitResult.Errors, commitResult.Message);
-
-                var publishResult = await PublishEventAsync(
+                var enqueueResult = await EnqueueEventAsync(
                         new ClienteAtualizado(
                             company.Id,
                             company.TipoCliente,
@@ -285,8 +281,12 @@ namespace CustomerPlatform.Application.Cqrs.Commands.Handlers
                         cancellationToken)
                     .ConfigureAwait(false);
 
-                if (!publishResult.IsSuccess)
-                    return Result<CustomerDto>.Failure(publishResult.Errors, publishResult.Message);
+                if (!enqueueResult.IsSuccess)
+                    return Result<CustomerDto>.Failure(enqueueResult.Errors, enqueueResult.Message);
+
+                var commitResult = await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
+                if (!commitResult.IsSuccess)
+                    return Result<CustomerDto>.Failure(commitResult.Errors, commitResult.Message);
 
                 return Result<CustomerDto>.Success(CustomerDtoMapper.Map(company));
             }
@@ -316,11 +316,7 @@ namespace CustomerPlatform.Application.Cqrs.Commands.Handlers
             if (!insertResult.IsSuccess)
                 return Result<CustomerDto>.Failure(insertResult.Errors, insertResult.Message);
 
-            var commitResult = await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
-            if (!commitResult.IsSuccess)
-                return Result<CustomerDto>.Failure(commitResult.Errors, commitResult.Message);
-
-            var publishResult = await PublishEventAsync(
+            var enqueueResult = await EnqueueEventAsync(
                     new ClienteCriado(
                         customer.Id,
                         customer.TipoCliente,
@@ -329,25 +325,29 @@ namespace CustomerPlatform.Application.Cqrs.Commands.Handlers
                     cancellationToken)
                 .ConfigureAwait(false);
 
-            if (!publishResult.IsSuccess)
-                return Result<CustomerDto>.Failure(publishResult.Errors, publishResult.Message);
+            if (!enqueueResult.IsSuccess)
+                return Result<CustomerDto>.Failure(enqueueResult.Errors, enqueueResult.Message);
+
+            var commitResult = await _unitOfWork.CommitAsync(cancellationToken).ConfigureAwait(false);
+            if (!commitResult.IsSuccess)
+                return Result<CustomerDto>.Failure(commitResult.Errors, commitResult.Message);
 
             return Result<CustomerDto>.Success(CustomerDtoMapper.Map(customer));
         }
 
-        private async Task<Result> PublishEventAsync(IDomainEvent domainEvent, CancellationToken cancellationToken)
+        private async Task<Result> EnqueueEventAsync(IDomainEvent domainEvent, CancellationToken cancellationToken)
         {
             if (domainEvent is null)
                 throw new ArgumentNullException(nameof(domainEvent));
 
             try
             {
-                await _eventPublisher.PublishAsync(domainEvent, cancellationToken).ConfigureAwait(false);
+                await _outboxWriter.EnqueueAsync(domainEvent, cancellationToken).ConfigureAwait(false);
                 return Result.Success();
             }
             catch (Exception ex)
             {
-                return Result.Failure($"Falha ao publicar evento: {ex.Message}");
+                return Result.Failure($"Falha ao registrar outbox: {ex.Message}");
             }
         }
         #endregion

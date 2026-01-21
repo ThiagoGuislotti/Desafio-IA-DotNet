@@ -1,9 +1,10 @@
-services:
+version: "3.8"
 
-  blackbox:   
+services:
+  blackbox:
     # https://prometheus.io
     # https://github.com/prometheus/blackbox_exporter
-    image: prom/blackbox-exporter:latest
+    image: prom/blackbox-exporter:v0.25.0
     hostname: blackbox
     container_name: blackbox-${COMPOSE_PROJECT_NAME}
     restart: always
@@ -12,15 +13,21 @@ services:
         limits:
           cpus: "4"
           memory: "4GB"
-    ports:
-      - 9115:9115
-    command: --config.file=/etc/blackbox/blackbox.yml
     networks:
       - nginxproxy
+    command: ["--config.file=/etc/blackbox/blackbox.yml"]
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:9115/ || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    ports:
+      - "9115:9115"
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ./prometheus/blackbox-config.yml:/etc/blackbox/blackbox.yml:ro
-  
+
   node-exporter:
     # https://prometheus.io
     # https://hub.docker.com/r/prom/node-exporter
@@ -36,13 +43,18 @@ services:
           memory: "4GB"
     networks:
       - nginxproxy
-    command: 
-      - '--path.procfs=/host/proc' 
-      - '--path.sysfs=/host/sys'
-      - --collector.filesystem.ignored-mount-points
-      - "^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)"
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - '--collector.filesystem.ignored-mount-points=^/(sys|proc|dev|host|etc|rootfs/var/lib/docker/containers|rootfs/var/lib/docker/overlay2|rootfs/run/docker/netns|rootfs/var/lib/docker/aufs)($$|/)'
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:9100/metrics || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     ports:
-      - 9100:9100
+      - "9100:9100"
     volumes:
       - /proc:/host/proc:ro
       - /sys:/host/sys:ro
@@ -51,7 +63,7 @@ services:
   prometheus:
     # https://prometheus.io
     # https://github.com/prometheus/prometheus
-    image: prom/prometheus:latest
+    image: prom/prometheus:v2.52.0
     hostname: prometheus
     container_name: prometheus-${COMPOSE_PROJECT_NAME}
     restart: always
@@ -62,21 +74,23 @@ services:
           memory: "4GB"
     networks:
       - nginxproxy
-    extra_hosts:
-      - "host.docker.internal=host-gateway"
     command:
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.path=/prometheus
-      - --web.enable-remote-write-receiver
-      - --enable-feature=exemplar-storage
-      - --storage.tsdb.retention.size=100GB
-      - --web.console.libraries=/etc/prometheus/console_libraries
-      - --web.console.templates=/etc/prometheus/consoles
-      - --web.enable-lifecycle
-    expose:
-      - 9090
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-remote-write-receiver"
+      - "--enable-feature=exemplar-storage"
+      - "--storage.tsdb.retention.size=100GB"
+      - "--web.console.libraries=/etc/prometheus/console_libraries"
+      - "--web.console.templates=/etc/prometheus/consoles"
+      - "--web.enable-lifecycle"
+    healthcheck:
+      test: ["CMD-SHELL", "wget --spider -q http://localhost:9090/-/ready || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
     ports:
-      - 9090:9090
+      - "9090:9090"
     volumes:
       - prometheus-data:/etc/prometheus
       - prometheus-config:/prometheus
@@ -85,7 +99,11 @@ services:
 
 networks:
   nginxproxy:
+    name: nginxproxy
+    driver: bridge
 
 volumes:
   prometheus-data:
+    name: prometheus-data
   prometheus-config:
+    name: prometheus-config

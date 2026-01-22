@@ -4,14 +4,15 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+		<Authors>Thiago Guislotti</Authors>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AspNetCore.HealthChecks.Elasticsearch" Version="8.0.1" />
-    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.1" />
-    <PackageReference Include="AspNetCore.HealthChecks.RabbitMQ" Version="8.0.1" />
+    <PackageReference Include="AspNetCore.HealthChecks.NpgSql" Version="8.0.2" />
+    <PackageReference Include="AspNetCore.HealthChecks.RabbitMQ" Version="8.0.2" />
     <PackageReference Include="Ductus.FluentDocker" Version="2.85.0" />
-    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.23" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
   </ItemGroup>
 

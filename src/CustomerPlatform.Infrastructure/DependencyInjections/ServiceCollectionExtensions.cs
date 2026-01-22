@@ -1,8 +1,10 @@
 using CustomerPlatform.Application.Abstractions;
 using CustomerPlatform.Application.Abstractions.Deduplication;
 using CustomerPlatform.Application.Abstractions.Messaging;
+using CustomerPlatform.Application.Abstractions.Repositories;
 using CustomerPlatform.Application.Abstractions.Search;
 using CustomerPlatform.Infrastructure.Data.Context;
+using CustomerPlatform.Infrastructure.Data.Repositories;
 using CustomerPlatform.Infrastructure.Data.UnitOfWork;
 using CustomerPlatform.Infrastructure.Deduplication;
 using CustomerPlatform.Infrastructure.Messaging;
@@ -63,6 +65,7 @@ namespace CustomerPlatform.Infrastructure.DependencyInjections
             services.Configure<DeduplicationOptions>(configuration.GetSection("Deduplication"));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ICustomerDocumentChecker, CustomerDocumentChecker>();
             services.AddScoped<IEventPublisher, RabbitMqEventPublisher>();
             services.AddScoped<IOutboxWriter, OutboxWriter>();
             services.AddScoped<ICustomerSearchService, ElasticCustomerSearchService>();

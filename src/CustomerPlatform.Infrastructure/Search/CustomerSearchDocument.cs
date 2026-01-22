@@ -1,4 +1,5 @@
 using CustomerPlatform.Domain.Enums;
+using System.Text.Json.Serialization;
 
 namespace CustomerPlatform.Infrastructure.Search
 {
@@ -16,6 +17,7 @@ namespace CustomerPlatform.Infrastructure.Search
         /// <summary>
         /// Tipo do cliente.
         /// </summary>
+        [JsonConverter(typeof(TipoClienteJsonConverter))]
         public TipoCliente CustomerType { get; init; }
 
         /// <summary>

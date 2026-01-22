@@ -35,3 +35,6 @@
 - Implementação da API REST para cadastro, atualização e busca de clientes.
 - Integração da API com a camada Application.
 - Padronização de erros, health checks e observabilidade.
+- Uso de middlewares para correlationId, logs e ProblemDetails.
+- Atualização unificada via `PUT /customers/{id}` com escolha de PF/PJ pelo `CustomerType`.
+- Testes de integração da API (cadastro/atualização/health) usando WebApplicationFactory.

@@ -12,7 +12,6 @@ using CustomerPlatform.Domain.Events;
 using CustomerPlatform.Domain.ValueObjects;
 using CustomerPlatform.UnitTests.Assets;
 using Moq;
-using System.Linq.Expressions;
 using Xunit;
 
 namespace CustomerPlatform.UnitTests.Tests.Application.Commands
@@ -23,6 +22,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
         #region Variables
         private readonly Mock<IRepository<Customer>> _repository;
         private readonly Mock<IUnitOfWork> _unitOfWork;
+        private readonly Mock<ICustomerDocumentChecker> _documentChecker;
         private readonly Mock<IOutboxWriter> _outboxWriter;
         private readonly Mock<IValidator<CreateIndividualCustomerCommand>> _individualValidator;
         private readonly Mock<IValidator<CreateCompanyCustomerCommand>> _companyValidator;
@@ -36,6 +36,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
         {
             _repository = new Mock<IRepository<Customer>>();
             _unitOfWork = new Mock<IUnitOfWork>();
+            _documentChecker = new Mock<ICustomerDocumentChecker>();
             _outboxWriter = new Mock<IOutboxWriter>();
             _individualValidator = new Mock<IValidator<CreateIndividualCustomerCommand>>();
             _companyValidator = new Mock<IValidator<CreateCompanyCustomerCommand>>();
@@ -47,9 +48,13 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
             _outboxWriter
                 .Setup(writer => writer.EnqueueAsync(It.IsAny<IDomainEvent>(), It.IsAny<CancellationToken>()))
                 .Returns(Task.CompletedTask);
+            _documentChecker
+                .Setup(checker => checker.ExistsAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(false);
 
             _handler = new CustomerCommandHandler(
                 _unitOfWork.Object,
+                _documentChecker.Object,
                 _outboxWriter.Object,
                 _individualValidator.Object,
                 _companyValidator.Object,
@@ -67,12 +72,6 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
             _individualValidator
                 .Setup(validator => validator.Validate(It.IsAny<CreateIndividualCustomerCommand>()))
                 .Returns(ValidationResult.Success());
-            _repository
-                .Setup(repository => repository.SearchFirstOrDefaultAsync(
-                    It.IsAny<Func<IQueryable<Customer>, IOrderedQueryable<Customer>>>(),
-                    It.IsAny<Expression<Func<Customer, bool>>>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync((Customer?)null);
             _repository
                 .Setup(repository => repository.InsertAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Result.Success());
@@ -154,12 +153,6 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
                 .Setup(validator => validator.Validate(It.IsAny<CreateIndividualCustomerCommand>()))
                 .Returns(ValidationResult.Success());
             _repository
-                .Setup(repository => repository.SearchFirstOrDefaultAsync(
-                    It.IsAny<Func<IQueryable<Customer>, IOrderedQueryable<Customer>>>(),
-                    It.IsAny<Expression<Func<Customer, bool>>>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync((Customer?)null);
-            _repository
                 .Setup(repository => repository.InsertAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Result.Success());
             _outboxWriter
@@ -187,12 +180,6 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
             _companyValidator
                 .Setup(validator => validator.Validate(It.IsAny<CreateCompanyCustomerCommand>()))
                 .Returns(ValidationResult.Success());
-            _repository
-                .Setup(repository => repository.SearchFirstOrDefaultAsync(
-                    It.IsAny<Func<IQueryable<Customer>, IOrderedQueryable<Customer>>>(),
-                    It.IsAny<Expression<Func<Customer, bool>>>(),
-                    It.IsAny<CancellationToken>()))
-                .ReturnsAsync((Customer?)null);
             _repository
                 .Setup(repository => repository.InsertAsync(It.IsAny<Customer>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(Result.Success());

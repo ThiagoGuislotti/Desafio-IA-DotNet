@@ -1,5 +1,6 @@
 using CustomerPlatform.Application.Abstractions;
 using CustomerPlatform.Application.Abstractions.Messaging;
+using CustomerPlatform.Application.Abstractions.Repositories;
 using CustomerPlatform.Application.Abstractions.Results;
 using CustomerPlatform.Application.Abstractions.Validation;
 using CustomerPlatform.Application.DTOs;
@@ -22,6 +23,7 @@ namespace CustomerPlatform.Application.Cqrs.Commands.Handlers
     {
         #region Variables
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ICustomerDocumentChecker _documentChecker;
         private readonly IOutboxWriter _outboxWriter;
         private readonly IValidator<CreateIndividualCustomerCommand> _individualValidator;
         private readonly IValidator<CreateCompanyCustomerCommand> _companyValidator;
@@ -34,6 +36,7 @@ namespace CustomerPlatform.Application.Cqrs.Commands.Handlers
         /// Construtor.
         /// </summary>
         /// <param name="unitOfWork">Unidade de trabalho.</param>
+        /// <param name="documentChecker">Verificador de duplicidade de documento.</param>
         /// <param name="outboxWriter">Escrita da outbox.</param>
         /// <param name="individualValidator">Validador para PF.</param>
         /// <param name="companyValidator">Validador para PJ.</param>
@@ -41,6 +44,7 @@ namespace CustomerPlatform.Application.Cqrs.Commands.Handlers
         /// <param name="updateCompanyValidator">Validador de atualizacao para PJ.</param>
         public CustomerCommandHandler(
             IUnitOfWork unitOfWork,
+            ICustomerDocumentChecker documentChecker,
             IOutboxWriter outboxWriter,
             IValidator<CreateIndividualCustomerCommand> individualValidator,
             IValidator<CreateCompanyCustomerCommand> companyValidator,
@@ -48,6 +52,7 @@ namespace CustomerPlatform.Application.Cqrs.Commands.Handlers
             IValidator<UpdateCompanyCustomerCommand> updateCompanyValidator)
         {
             _unitOfWork = unitOfWork ?? throw new ArgumentNullException(nameof(unitOfWork));
+            _documentChecker = documentChecker ?? throw new ArgumentNullException(nameof(documentChecker));
             _outboxWriter = outboxWriter ?? throw new ArgumentNullException(nameof(outboxWriter));
             _individualValidator = individualValidator ?? throw new ArgumentNullException(nameof(individualValidator));
             _companyValidator = companyValidator ?? throw new ArgumentNullException(nameof(companyValidator));
@@ -301,11 +306,11 @@ namespace CustomerPlatform.Application.Cqrs.Commands.Handlers
         {
             var repository = _unitOfWork.GetRepository<Customer>();
 
-            var existing = await repository
-                .SearchFirstOrDefaultAsync(predicate: current => current.GetDocumento() == customer.GetDocumento(), cancellationToken: cancellationToken)
+            var documentExists = await _documentChecker
+                .ExistsAsync(customer.GetDocumento(), cancellationToken)
                 .ConfigureAwait(false);
 
-            if (existing is not null)
+            if (documentExists)
                 return Result<CustomerDto>.Failure("Documento ja cadastrado.");
 
             var insertResult = await repository

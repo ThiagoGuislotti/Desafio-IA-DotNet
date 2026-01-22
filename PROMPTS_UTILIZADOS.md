@@ -703,3 +703,230 @@ Infraestrutura implementada com persistência (PostgreSQL + EF Core), mensageria
 - [ ] Ruim - tive que refazer manualmente
 
 ---
+
+## Prompt #5
+
+### 🎯 Contexto/Objetivo
+Implementar a Fase 5 (API REST + Worker) com ajustes de organizacao, middlewares, health checks e testes de integracao.
+
+### 🤖 Ferramenta Utilizada
+Codex (OpenAI)
+
+### 💬 Prompt Utilizado
+```
+# API (REST) + Worker + Ajustes de Organização e Simplificação
+
+## Contexto Geral
+
+Este prompt corresponde à **Fase 5 do planejamento**, conforme definido no `PLANEJAMENTO.md`, e inclui também ajustes de simplificação para reduzir duplicação de código e remover complexidade desnecessária.
+
+Nesta etapa, a IA pode gerar código, porém **somente** em:
+- `src/CustomerPlatform.Api`
+- `src/CustomerPlatform.Worker` (apenas ajustes para remover duplicações e chamar serviços já existentes)
+- `tests/CustomerPlatform.IntegrationTests` (fluxo da API e do worker, quando aplicável)
+- `tests/CustomerPlatform.UnitTests` (apenas limpeza/remoção de assets não usados, se necessário)
+
+---
+
+## Objetivo da Fase (Fase 5)
+
+- Implementar a **API REST** de clientes (cadastro, atualização e busca) usando a Application (CQRS/MediatR).  
+- Garantir **ProblemDetails**, **CorrelationId** e **Health Checks**.  
+- Ajustar **Worker** para que ele **não reimplemente lógica**: deve somente **orquestrar** chamadas para Application/Infrastructure (Outbox publisher, consumers e services já existentes).  
+- Remover **código não utilizado** (Assets de testes, helpers redundantes, código “sobrando”).  
+- Reduzir **complexidade desnecessária** gerada por implementações duplicadas ou abstrações não usadas.
+- Garantir tratamento centralizado de erros e logs.
+- Simplificar o código, removendo implementações duplicadas e assets não utilizados.
+- Manter aderência total à arquitetura definida.
+- Passar todas as configurações necessario0s para os serviços externos via Docker-composse, se aplicável, (Filas do rabbitMq, configurações do Elastc).
+- Corrigir testes do Elastic.Transport.UnexpectedTransportException
+
+---
+
+## Regras Obrigatórias
+
+- API deve depender de `CustomerPlatform.Application` e usar MediatR para comandos/queries.
+- A API **não** deve implementar lógica de persistência, mensageria, busca ou deduplicação diretamente.
+- O Worker **não** deve duplicar lógica que pertence à Infrastructure (ex.: repos, outbox store, elastic client, dedup service).
+- Remover códigos/pastas/classes não usadas, evitando manter “código morto”.
+- Manter simplicidade: sem AutoMapper, sem patterns extras.
+
+---
+
+## 1) API REST – Endpoints mínimos
+
+Implementar Controllers em `src/CustomerPlatform.Api/Controllers`:
+
+### Cadastro PF/PJ
+- `POST /customers/pf`
+- `POST /customers/pj`
+- Disparar `CreateCustomerPfCommand` / `CreateCustomerPjCommand` via MediatR
+- Retornar:
+  - 201 (Created) com DTO
+  - 400 com ProblemDetails para erros de validação/domínio
+
+### Atualização
+- `PUT /customers/{id}`
+- Disparar `UpdateCustomerCommand`
+- Retornar:
+  - 200 com DTO atualizado
+  - 404 se não encontrado (conforme regra que vocês adotaram)
+  - 400 para erro de validação/domínio
+
+### Busca (somente Elastic via Application)
+- `GET /customers/search?...`
+- Disparar `SearchCustomersQuery` via MediatR
+- Retornar paginado, ordenado por relevância (delegado ao Elastic)
+
+Observação: a consulta deve seguir o desenho definido: **queries leem do Elastic** (read model).
+
+---
+
+## 2) Middleware centralizado de exceções e logs (obrigatório)
+
+### Exceções
+- Implementar middleware único para:
+  - Capturar exceções de domínio, validação e infraestrutura.
+  - Mapear exceções para HTTP status apropriado.
+  - Retornar respostas padronizadas (ProblemDetails ou Result).
+- Não usar try/catch em controllers ou handlers.
+- Usar como referência o **ExceptionMiddleware** do NetToolsKit.
+
+### Logging
+- Implementar middleware único para logging de request/response:
+  - Método, rota, status code e CorrelationId.
+  - Payloads apenas quando configurado.
+- Não logar request/response manualmente nos controllers.
+- Usar como referência o **LoggerMiddleware** do NetToolsKit.
+
+### Diretrizes
+- Middlewares devem ser registrados logo após o middleware de CorrelationId.
+- Logs e erros devem sempre conter TransactionId/CorrelationId.
+- Objetivo: centralizar observabilidade e eliminar código repetido.
+
+---
+
+## 3) Tratamento de erros (ProblemDetails)
+
+- Implementar middleware para mapear:
+  - `Result`/erros de validação -> 400
+  - exceções de domínio -> 400
+  - not found -> 404
+- Resposta sempre em ProblemDetails (RFC7807).
+
+---
+
+## 4) CorrelationId e Observabilidade
+
+- Implementar middleware de CorrelationId:
+  - Aceitar header (ex.: `X-Correlation-Id`)
+  - Se não existir, gerar
+  - Propagar para logs
+
+- Manter OpenTelemetry/Serilog já configurados (não reimplementar).
+
+---
+
+## 5) Health Checks
+
+- `GET /health`
+- Health checks para:
+  - PostgreSQL
+  - RabbitMQ
+  - ElasticSearch
+- Manter simples e funcional.
+
+---
+
+## 6) Ajuste do Worker (remover duplicações)
+
+Objetivo: Worker deve apenas **orquestrar** chamadas para serviços existentes.
+
+### Regras:
+- Não criar “mini-implementações” no Worker.
+- Worker deve chamar:
+  - serviços/clients existentes em Infrastructure
+  - abstrações definidas na Application
+- Remover classes duplicadas/consumidores duplicados se houver.
+
+Checklist:
+- [ ] Revisar HostedServices e Consumers: remover lógica duplicada de infra.
+- [ ] Injeção de dependências do Worker deve usar `CustomerPlatform.Infrastructure.DependencyInjections`.
+- [ ] Worker deve apenas coordenar:
+  - OutboxPublisherHostedService
+  - CustomerEventsConsumerHostedService
+- [ ] Polly/resiliência deve ser reutilizada de Infra/Observability quando possível, sem duplicar policy factories.
+
+---
+
+## 7) Limpeza de Assets e código não usado (Testes)
+
+- Remover arquivos em `tests/**/Assets` que não estão sendo usados.
+- Remover builders/helpers não referenciados.
+- Manter somente:
+  - mocks/helpers realmente usados
+  - dados gerados com Bogus quando necessário
+
+Checklist:
+- [ ] Remover classes/arquivos não referenciados em UnitTests Assets.
+- [ ] Consolidar helpers redundantes.
+- [ ] Ajustar namespaces e referências após remoção.
+
+---
+
+## 8) Remover complexidade desnecessária
+
+- Se existir mapper manual duplicado em múltiplos lugares:
+  - centralizar em um único lugar (por exemplo, na Application como mapper simples interno) ou manter local no handler, mas sem duplicação.
+- Se existir abstração criada e nunca usada:
+  - remover.
+- Se existir fluxo “paralelo” ao Outbox:
+  - remover e manter apenas Outbox -> Worker -> Rabbit -> Elastic.
+
+---
+
+## Testes (Integração)
+
+Criar/ajustar testes de integração para:
+- Cadastro -> grava Postgres -> gera Outbox
+- Worker publica evento -> consumer indexa no Elastic
+- Busca via API retorna no endpoint `/customers/search`
+
+Regras:
+- Usar `tests/CustomerPlatform.IntegrationTests/Tests/GlobalSetup.cs`
+- NUnit
+- Evitar excesso: 1 ou 2 testes end-to-end já são suficientes.
+
+---
+
+## Documentação Obrigatória
+
+Ao finalizar:
+- Atualizar `PLANEJAMENTO.md` marcando itens da Fase 5 concluídos.
+- Registrar este prompt como Prompt #5 em `PROMPTS_UTILIZADOS.md`.
+- Registrar decisões relevantes no `DECISOES_TECNICAS.md`.
+
+---
+
+## Resultado Esperado
+
+- API REST funcional com endpoints de cadastro, atualização e busca.
+- Erros padronizados com ProblemDetails.
+- CorrelationId e health checks implementados.
+- Worker sem duplicação de lógica: apenas orquestra serviços existentes.
+- Limpeza de código morto e assets não usados.
+- Menos complexidade e menos código redundante, mantendo o projeto simples e auditável.
+```
+
+### ✅ Resultado Obtido
+Implementacao dos controllers REST (cadastro/atualizacao/busca), middlewares de correlationId/logs/ProblemDetails, health checks e testes de integracao basicos da API (cadastro, atualizacao e health).
+
+### 🔄 Refinamentos Necessarios
+1- Teste de fluxo completo do Worker (Outbox -> Rabbit -> Elastic) pendente para fase posterior.
+2- Correcao do erro de deserializacao do Elastic (UnexpectedTransportException) pendente para fase posterior.
+
+### 📊 Avaliação Pessoal
+- [ ] Excelente - usei diretamente sem modificações
+- [x] Bom - fiz pequenos ajustes
+- [ ] Regular - precisei modificar bastante
+- [ ] Ruim - tive que refazer manualmente

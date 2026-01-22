@@ -37,12 +37,13 @@ Fase 4 - Infrastructure
 - [x] Registrar Prompt #4 em `PROMPTS_UTILIZADOS.md`.
 
 Fase 5 - API e Worker
-- [ ] Implementar controllers REST (CRUD + busca probabilistica).
-- [ ] Implementar ProblemDetails, correlationId e health checks.
+- [x] Implementar controllers REST (cadastro, atualizacao e busca).
+- [x] Implementar ProblemDetails, correlationId e health checks.
 - [x] Substituir publicacao direta por Outbox (Application).
 - [x] Criar Worker e consumidores de eventos para deduplicacao.
 - [x] Aplicar resiliencia no Worker (RabbitMQ/Elastic).
-- [ ] Criar testes de integracao de API e fluxo de eventos do Worker.
+- [x] Criar testes de integracao da API (cadastro/atualizacao/health).
+- [ ] Criar testes do fluxo completo do Worker (Outbox -> Rabbit -> Elastic).
 - [x] Registrar Prompt #5 em `PROMPTS_UTILIZADOS.md`.
 
 Fase 6 - Testes, Docker e Docs
@@ -71,7 +72,9 @@ Infraestrutura
 API
 - [x] `src/CustomerPlatform.Api` existe com HealthController e Swagger.
 - [x] Decisao de interface: REST.
-- [ ] Endpoints de clientes, validacoes e observabilidade estao faltando.
+- [x] Endpoints de clientes (cadastro/atualizacao/busca) implementados.
+- [x] Middlewares de ProblemDetails, correlationId e logs implementados.
+- [x] Health checks de Postgres, RabbitMQ e Elastic configurados.
 
 Worker
 - [x] `src/CustomerPlatform.Worker` existe com HostedServices para outbox e consumo.
@@ -80,6 +83,8 @@ Testes
 - [x] `tests/CustomerPlatform.Tests` existe (legado).
 - [x] `tests/CustomerPlatform.UnitTests` existe.
 - [x] `tests/CustomerPlatform.IntegrationTests` existe (setup inicial).
+- [x] Testes de integracao da API adicionados.
+- [ ] Testes do fluxo completo do Worker pendentes.
 
 Docker
 - [x] Pasta `docker/` com compose files existe.

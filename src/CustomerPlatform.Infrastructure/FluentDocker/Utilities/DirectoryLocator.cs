@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace CustomerPlatform.IntegrationTests.Assets.FluentDocker.Utilities
+namespace CustomerPlatform.Infrastructure.FluentDocker.Utilities
 {
     /// <summary>
     /// Utilitario para localizar diretorios dentro do repositorio.

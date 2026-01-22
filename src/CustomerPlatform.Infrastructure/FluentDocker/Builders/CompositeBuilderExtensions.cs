@@ -1,7 +1,7 @@
 using Ductus.FluentDocker.Builders;
 using System.Text.RegularExpressions;
 
-namespace CustomerPlatform.IntegrationTests.Assets.FluentDocker.Builders
+namespace CustomerPlatform.Infrastructure.FluentDocker.Builders
 {
     /// <summary>
     /// Extensoes do CompositeBuilder para carregar variaveis de ambiente do .env.
@@ -28,7 +28,8 @@ namespace CustomerPlatform.IntegrationTests.Assets.FluentDocker.Builders
                 .Where(line => !string.IsNullOrWhiteSpace(line) && !line.StartsWith('#'))
                 .Select(line => line.Split('=', 2))
                 .Where(parts => parts.Length == 2)
-                .Select(parts => new KeyValuePair<string, string>(parts[0].Trim(), parts[1].Trim()));
+                .Select(parts => new KeyValuePair<string, string>(parts[0].Trim(), parts[1].Trim()))
+                .Where(kv => !string.Equals(kv.Key, "COMPOSE_PROJECT_NAME", StringComparison.OrdinalIgnoreCase));
 
             string resolveVariables(string value)
             {

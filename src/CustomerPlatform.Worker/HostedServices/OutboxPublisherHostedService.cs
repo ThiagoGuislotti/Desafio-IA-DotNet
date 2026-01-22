@@ -1,6 +1,7 @@
 using CustomerPlatform.Infrastructure.Data.Context;
 using CustomerPlatform.Infrastructure.Data.Context.Entities;
 using CustomerPlatform.Infrastructure.Messaging;
+using CustomerPlatform.Worker.Resilience;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Polly;
@@ -17,8 +18,6 @@ namespace CustomerPlatform.Worker.HostedServices
         #region Constants
         private const int BatchSize = 50;
         private const int PollDelaySeconds = 5;
-        private const int RetryCount = 3;
-        private const int RetryDelayMilliseconds = 200;
         private const int MaxErrorLength = 2000;
         #endregion
 
@@ -61,7 +60,7 @@ namespace CustomerPlatform.Worker.HostedServices
             _channel = _connection.CreateModel();
             _channel.ExchangeDeclare(_options.ExchangeName, _options.ExchangeType, durable: true, autoDelete: false);
 
-            _publishPolicy = CreateRetryPolicy();
+            _publishPolicy = ResiliencePolicies.CreateRabbitPublishPolicy();
         }
         #endregion
 
@@ -153,15 +152,6 @@ namespace CustomerPlatform.Worker.HostedServices
                 body: body);
 
             return Task.CompletedTask;
-        }
-
-        private static AsyncPolicy CreateRetryPolicy()
-        {
-            return Policy
-                .Handle<Exception>()
-                .WaitAndRetryAsync(
-                    RetryCount,
-                    retryAttempt => TimeSpan.FromMilliseconds(RetryDelayMilliseconds * retryAttempt));
         }
 
         private static string NormalizeError(string message)

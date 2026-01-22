@@ -58,7 +58,7 @@ namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Data
 
             var customer = ClientePessoaFisica.Criar(
                 "Joao da Silva",
-                "52998224725",
+                "44713111821",
                 "joao@test.com",
                 "11999999999",
                 new DateOnly(1990, 1, 1),

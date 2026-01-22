@@ -11,12 +11,6 @@ namespace CustomerPlatform.Worker.Resilience
     /// </summary>
     public sealed class ResilientCustomerSearchService : ICustomerSearchService
     {
-        #region Constants
-        private const int RetryCount = 3;
-        private const int RetryDelayMilliseconds = 200;
-        private const int TimeoutSeconds = 3;
-        #endregion
-
         #region Variables
         private readonly ElasticCustomerSearchService _inner;
         private readonly AsyncPolicy _policy;
@@ -30,7 +24,7 @@ namespace CustomerPlatform.Worker.Resilience
         public ResilientCustomerSearchService(ElasticCustomerSearchService inner)
         {
             _inner = inner ?? throw new ArgumentNullException(nameof(inner));
-            _policy = Policy.WrapAsync(CreateRetryPolicy(), CreateTimeoutPolicy());
+            _policy = ResiliencePolicies.CreateElasticPolicy();
         }
         #endregion
 
@@ -63,19 +57,6 @@ namespace CustomerPlatform.Worker.Resilience
         #endregion
 
         #region Private Methods/Operators
-        private static AsyncPolicy CreateRetryPolicy()
-        {
-            return Policy
-                .Handle<Exception>()
-                .WaitAndRetryAsync(
-                    RetryCount,
-                    retryAttempt => TimeSpan.FromMilliseconds(RetryDelayMilliseconds * retryAttempt));
-        }
-
-        private static AsyncPolicy CreateTimeoutPolicy()
-        {
-            return Policy.TimeoutAsync(TimeSpan.FromSeconds(TimeoutSeconds));
-        }
         #endregion
     }
 }

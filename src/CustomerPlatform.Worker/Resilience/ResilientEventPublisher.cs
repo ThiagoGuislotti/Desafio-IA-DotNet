@@ -10,11 +10,6 @@ namespace CustomerPlatform.Worker.Resilience
     /// </summary>
     public sealed class ResilientEventPublisher : IEventPublisher
     {
-        #region Constants
-        private const int RetryCount = 3;
-        private const int RetryDelayMilliseconds = 200;
-        #endregion
-
         #region Variables
         private readonly RabbitMqEventPublisher _inner;
         private readonly AsyncPolicy _policy;
@@ -28,7 +23,7 @@ namespace CustomerPlatform.Worker.Resilience
         public ResilientEventPublisher(RabbitMqEventPublisher inner)
         {
             _inner = inner ?? throw new ArgumentNullException(nameof(inner));
-            _policy = CreateRetryPolicy();
+            _policy = ResiliencePolicies.CreateRabbitPublishPolicy();
         }
         #endregion
 
@@ -46,14 +41,6 @@ namespace CustomerPlatform.Worker.Resilience
         #endregion
 
         #region Private Methods/Operators
-        private static AsyncPolicy CreateRetryPolicy()
-        {
-            return Policy
-                .Handle<Exception>()
-                .WaitAndRetryAsync(
-                    RetryCount,
-                    retryAttempt => TimeSpan.FromMilliseconds(RetryDelayMilliseconds * retryAttempt));
-        }
         #endregion
     }
 }

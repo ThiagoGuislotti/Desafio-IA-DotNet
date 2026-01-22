@@ -12,6 +12,7 @@
 		<PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="8.0.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Console" Version="8.0.0" />
+		<PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="8.0.0" />
 		<PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
 		<PackageReference Include="NUnit" Version="3.14.0" />
 		<PackageReference Include="NUnit3TestAdapter" Version="4.5.0" />
@@ -19,9 +20,11 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\..\src\CustomerPlatform.Api\CustomerPlatform.Api.csproj" />
 		<ProjectReference Include="..\..\src\CustomerPlatform.Domain\CustomerPlatform.Domain.csproj" />
 		<ProjectReference Include="..\..\src\CustomerPlatform.Application\CustomerPlatform.Application.csproj" />
 		<ProjectReference Include="..\..\src\CustomerPlatform.Infrastructure\CustomerPlatform.Infrastructure.csproj" />
+		<ProjectReference Include="..\..\src\CustomerPlatform.Worker\CustomerPlatform.Worker.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

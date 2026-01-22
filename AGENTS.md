@@ -40,7 +40,7 @@ Default workflow for all tasks: Static RAGs Routing (Route -> Execute)
 # Project Constraints
 
 ## Target Architecture
-- Reference: `ARQUITETURA.md`
+- Reference: `docs/ARQUITETURA.md`
 
 ## Execution Order
 - Always start from Domain and move outward: Domain -> Application -> Infrastructure -> API -> Tests -> Docker -> Docs.

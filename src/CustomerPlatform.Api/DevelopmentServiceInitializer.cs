@@ -1,7 +1,5 @@
 using CustomerPlatform.Infrastructure.Data.Context;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace CustomerPlatform.Api
 {

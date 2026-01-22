@@ -1,7 +1,6 @@
 using CustomerPlatform.Infrastructure.Data.Context;
-using CustomerPlatform.IntegrationTests.Assets;
 using CustomerPlatform.Infrastructure.FluentDocker.Builders;
-using CustomerPlatform.Infrastructure.FluentDocker.Utilities;
+using CustomerPlatform.IntegrationTests.Assets;
 using Ductus.FluentDocker.Builders;
 using Ductus.FluentDocker.Services;
 using Microsoft.EntityFrameworkCore;

@@ -59,6 +59,8 @@ namespace CustomerPlatform.Worker.HostedServices
             _connection = factory.CreateConnection();
             _channel = _connection.CreateModel();
             _channel.ExchangeDeclare(_options.ExchangeName, _options.ExchangeType, durable: true, autoDelete: false);
+            _channel.QueueDeclare(queue: _options.QueueName, durable: true, exclusive: false, autoDelete: false);
+            _channel.QueueBind(queue: _options.QueueName, exchange: _options.ExchangeName, routingKey: "#");
 
             _publishPolicy = ResiliencePolicies.CreateRabbitPublishPolicy();
         }

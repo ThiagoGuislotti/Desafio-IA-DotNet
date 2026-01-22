@@ -38,3 +38,12 @@
 - Uso de middlewares para correlationId, logs e ProblemDetails.
 - Atualização unificada via `PUT /customers/{id}` com escolha de PF/PJ pelo `CustomerType`.
 - Testes de integração da API (cadastro/atualização/health) usando WebApplicationFactory.
+
+## Fase 6 – Finalizacao
+
+- README na raiz criado seguindo template e referencias a `docs/`.
+- Exemplos de Swagger adicionados via SchemaFilter e OperationFilter (sem bibliotecas extras).
+- Prometheus mantido como opcional; observabilidade principal via OTLP + Aspire Dashboard.
+- Testes de integracao com fluxo completo do Worker e cenarios de deduplicacao com seed controlado.
+- Threshold de deduplicacao nos testes ajustado para 0.6 para cobrir cenarios de nome + email/telefone.
+- Deduplicacao consulta candidatos pelo nome (fuzzy) e aplica score para email/telefone, evitando filtros restritivos no Elastic.

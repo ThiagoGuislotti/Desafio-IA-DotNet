@@ -37,7 +37,7 @@ namespace CustomerPlatform.Infrastructure.Search
         public async Task<bool> EnsureIndexAsync(CancellationToken cancellationToken = default)
         {
             var exists = await _client.Indices.ExistsAsync(_indexName, cancellationToken).ConfigureAwait(false);
-            if (exists.IsValidResponse)
+            if (exists.ApiCallDetails?.HttpStatusCode == 200)
                 return true;
 
             var response = await _client.Indices.CreateAsync(_indexName, cancellationToken)

@@ -930,3 +930,242 @@ Implementacao dos controllers REST (cadastro/atualizacao/busca), middlewares de 
 - [x] Bom - fiz pequenos ajustes
 - [ ] Regular - precisei modificar bastante
 - [ ] Ruim - tive que refazer manualmente
+
+---
+
+## Prompt #6
+
+### 🎯 Contexto/Objetivo
+Finalizar a Fase 6 com ajustes finais de testes, docker e documentacao para entrega.
+
+### 🤖 Ferramenta Utilizada
+Codex (OpenAI)
+
+### 💬 Prompt Utilizado
+```
+# Finalização: Testes, Docker e Documentação (com Deduplicação e Artefatos de Teste)
+
+## Contexto Geral
+
+Este prompt corresponde à **Fase 6 do planejamento** e tem como objetivo preparar o projeto para entrega final: organização de documentação, ajustes finais de docker-compose, correções de testes pendentes, expansão de cenários de deduplicação e validação ponta a ponta (Postgres -> Outbox -> RabbitMQ -> Elastic -> API).
+
+---
+
+## Objetivo da Fase
+
+- Atualizar e finalizar a documentação de execução do projeto.
+- Garantir que o ambiente Docker esteja consistente e reprodutível.
+- Criar docker-compose principal usando referencias com os arquivos já existentes, Veja  exemplo em "C:\Users\tguis\Documents\Trabalho\Pessoal\Desenvolvimento\Projetos\NetToolsKit\samples\docker\docker-compose.yaml".
+- Completar testes pendentes (principalmente fluxo completo do Worker).
+- Expandir testes de deduplicação com múltiplos cenários e validação do score.
+- Validar nos testes de integração que:
+  - eventos foram publicados e consumidos via RabbitMQ
+  - documentos foram indexados e consultáveis no ElasticSearch
+- Criar seed de valores para testes quando necessário para os testes de integração validando os calculos de deduplicação e relevancia.
+- Criar um arquivo `.http` para facilitar testes manuais da API (estilo `Rent.Service.Api.Test.http`).
+- Adicionar exemplos de requests/responses no Swagger (exemplos de payload).
+- Verificar se temos Métrica Traces e Logs corretos, se é necessário usar o Prometheus em "docker\observability\docker-compose-prometheus.yaml"
+
+---
+
+## Regras Obrigatórias
+
+- Não criar novas features de negócio além de ajustes necessários para teste, observabilidade e documentação.
+- Priorizar ajustes pequenos e objetivos.
+- Manter imagens Docker com versões fixas (sem `latest`) e healthchecks em todos os serviços.
+- Manter o padrão: API usa Application; Worker orquestra; Infrastructure implementa integrações.
+- Para testes, usar o `GlobalSetup.cs` como bootstrap único dos serviços externos.
+
+---
+
+## 1) Documentação (obrigatório)
+
+### README (raiz) em PT-br seguindo o exemplo de "C:\Users\tguis\Documents\Trabalho\Pessoal\Desenvolvimento\Projetos\NetToolsKit\samples\README.md"
+Criar um `README.md` na raiz com:
+- Pré-requisitos (.NET 8, Docker)
+- Como subir infraestrutura via docker compose
+- Como rodar API e Worker
+- Como rodar testes unitários e integração
+- Como acessar Swagger
+- Como acessar Aspire Dashboard
+- Referência explícita à pasta `docs/` contendo os arquivos originais do desafio
+
+### docs/
+Movido os arquivos originais do desafio para `docs/` e ajustar links no README:
+- `docs/DESAFIO.md`
+- `docs/ESTRUTURA_PROJETO.md`
+- `docs/TEMPLATE_ENTREGA.md`
+- `docs/README.md`
+
+### COMO_EXECUTAR.md
+Criar `COMO_EXECUTAR.md` com passos diretos e exemplos práticos.
+
+### CRITERIOS_AVALIACAO.md
+Se o arquivo não existir, criar um `CRITERIOS_AVALIACAO.md` mínimo com:
+- lista de itens avaliáveis
+- como reproduzir execução/testes
+- como validar endpoints e observabilidade
+
+---
+
+## 2) Docker (obrigatório)
+
+- Revisar todos os docker-compose em `docker/**`:
+  - Confirmar versões fixas (sem `latest`)
+  - Confirmar healthcheck em todos os serviços
+  - Confirmar portas, variáveis de ambiente e dependências
+- Garantir compose do ElasticSearch funcional.
+- Garantir Aspire Dashboard acessível.
+- Garantir que API/Worker consigam ler configurações via environment variables.
+
+---
+
+## 3) Testes de Integração – Fluxo completo e validações (obrigatório)
+
+### 3.1 Fluxo completo do Worker (Postgres -> Outbox -> Rabbit -> Elastic)
+Criar testes de integração para validar:
+- Cadastro via API -> grava Postgres e gera Outbox
+- OutboxPublisher -> publica no RabbitMQ
+- Consumer -> consome do RabbitMQ -> indexa no Elastic
+- Query via API -> retorna resultados do Elastic
+
+Regras:
+- Usar `tests/CustomerPlatform.IntegrationTests/Tests/GlobalSetup.cs`
+- NUnit
+- Manter poucos testes end-to-end, porém completos (1 ou 2 principais)
+
+### 3.2 Validação explícita de RabbitMQ (recebimento de mensagens)
+Nos testes de integração, validar que:
+- Após o create/update, existe um `OutboxEvent` pendente
+- Após rodar o OutboxPublisher, o evento foi marcado como processado
+- O consumer realmente recebeu/processou a mensagem
+
+Observação:
+- A validação deve ser feita de forma objetiva:
+  - via tabela Outbox (ProcessedAt/LastError)
+  - e/ou via uma marca de processamento (ex.: tabela de suspeitas gravada)
+  - evitar dependência de “console logs”
+
+### 3.3 Validação explícita de ElasticSearch (indexação e consulta)
+Nos testes de integração, validar que:
+- O documento do cliente foi indexado no Elastic (upsert)
+- A busca retorna o cliente esperado
+- A ordenação por relevância retorna o mais próximo primeiro (cenário simples)
+
+---
+
+## 4) Testes de Deduplicação – múltiplos cenários (obrigatório)
+
+Criar um conjunto de testes que explore deduplicação em diferentes formas e garanta consistência do cálculo.
+
+### Regras para dedup (MVP simples)
+- Deduplicação é **suspeita**, não merge automático.
+- Score simples baseado em:
+  - similaridade de nome
+  - email igual/parecido
+  - telefone igual
+  - documento diferente (para não bloquear cadastro por unicidade)
+
+### Cenários mínimos
+1) Nome muito parecido + telefone igual -> gera suspeita
+2) Nome muito parecido + email igual -> gera suspeita
+3) Nome parecido + email e telefone diferentes -> não gera suspeita (dependendo do threshold)
+4) Empresa vs PF com nomes similares -> não gera suspeita (ou gera com score menor, conforme regra adotada)
+
+### O que validar nesses testes
+- Se suspeita foi registrada em `DuplicateSuspicion` no Postgres
+- Se evento `DuplicataSuspeita` foi publicado (se estiver implementado)
+- Se score é maior/menor que o threshold esperado
+
+---
+
+## 5) Seed de dados para testes (se necessário)
+
+Criar um seed controlado para testes de integração e deduplicação:
+- Um conjunto pequeno e determinístico de clientes (PF/PJ)
+- Dados com variações planejadas (acentos, espaços, dígitos, nomes similares)
+- Seed deve ser usado apenas nos testes (não contaminar execução normal)
+
+Regras:
+- Seed pode ser aplicado via DbContext no ambiente de teste
+- Evitar seed “automático” em produção/dev
+
+---
+
+## 6) Arquivo de testes manuais da API (.http) (obrigatório)
+
+Criar um arquivo na API, por exemplo:
+- `src/CustomerPlatform.Api/CustomerPlatform.Api.Test.http`
+
+Seguir o padrão do arquivo de referência `Rent.Service.Api.Test.http`.
+
+Conteúdo mínimo:
+- Requests para:
+  - POST PF
+  - POST PJ
+  - PUT update
+  - GET search
+  - GET health
+- Incluir variáveis de ambiente (host/porta) e exemplos de payloads.
+
+---
+
+## 7) Exemplos no Swagger (obrigatório)
+
+Adicionar exemplos de payloads no Swagger para facilitar avaliação:
+- Exemplo de request/response para cadastro PF
+- Exemplo de request/response para cadastro PJ
+- Exemplo de request/response para update
+- Exemplo de search com fuzzy
+
+Regras:
+- Manter simples
+- Não criar bibliotecas extras só para exemplo
+- Pode usar:
+  - exemplos via atributos (quando aplicável)
+  - ou exemplos descritivos em XML docs dos DTOs/controllers
+
+---
+
+## 8) Limpeza final (obrigatório)
+
+- Remover Assets e helpers não utilizados em `tests/**/Assets`.
+- Remover classes não utilizadas no Worker/API.
+- Reduzir duplicação de código:
+  - Middlewares e loggers centralizados
+  - Worker apenas orquestra, sem reimplementar lógica de Infra
+
+---
+
+## 9) Atualização de documentos de controle
+
+- Atualizar `PLANEJAMENTO.md` marcando Fase 6 concluída.
+- Atualizar `DECISOES_TECNICAS.md` apenas se houver ajustes finais relevantes.
+- Atualizar `PROMPTS_UTILIZADOS.md` registrando este prompt.
+
+---
+
+## Resultado Esperado
+
+- Projeto executável por terceiros com documentação clara.
+- Docker compose reprodutível, com healthchecks e versões fixas.
+- Testes unitários e integração executando com sucesso.
+- Fluxo Worker (Outbox -> Rabbit -> Elastic) validado por teste.
+- Deduplicação validada com múltiplos cenários e seed controlado.
+- Arquivo `.http` para testes manuais da API.
+- Swagger com exemplos claros de payload.
+- Repositório limpo, sem código morto e com estrutura de docs organizada.
+```
+
+### ✅ Resultado Obtido
+Criacao do README na raiz, documentacao de execucao em `COMO_EXECUTAR.md`, criterios de avaliacao em `CRITERIOS_AVALIACAO.md`, exemplos no Swagger, arquivo `.http` para testes manuais e testes de integracao para fluxo completo do Worker e deduplicacao com seed controlado.
+
+### 🔄 Refinamentos Necessários
+1- Inclusão de testes adicionais para ampliar a cobertura dos cenários críticos.
+2- Padronização da nomenclatura dos testes para maior consistência e clareza.
+
+### 📊 Avaliação Pessoal
+- [ ] Excelente - usei diretamente sem modificações
+- [x] Bom - fiz pequenos ajustes
+- [ ] Regular - precisei modificar bastante
+- [ ] Ruim - tive que refazer manualmente

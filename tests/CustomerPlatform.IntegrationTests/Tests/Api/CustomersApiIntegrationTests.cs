@@ -93,7 +93,7 @@ namespace CustomerPlatform.IntegrationTests.Tests.Api
 
         #region Test Methods - CreateIndividual Valid Cases
         [Test]
-        public async Task CreateIndividual_ShouldReturnCreated()
+        public async Task CriarIndividual_DeveRetornarCriado()
         {
             // Arrange
             var command = new CreateIndividualCustomerCommand
@@ -127,7 +127,7 @@ namespace CustomerPlatform.IntegrationTests.Tests.Api
 
         #region Test Methods - UpdateCustomer Valid Cases
         [Test]
-        public async Task UpdateCustomer_ShouldReturnOk()
+        public async Task AtualizarCliente_DeveRetornarOk()
         {
             // Arrange
             var createCommand = new CreateIndividualCustomerCommand
@@ -186,7 +186,7 @@ namespace CustomerPlatform.IntegrationTests.Tests.Api
 
         #region Test Methods - HealthCheck Valid Cases
         [Test]
-        public async Task Health_ShouldReturnOk()
+        public async Task Saude_DeveRetornarOk()
         {
             // Arrange
             // Act

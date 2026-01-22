@@ -22,7 +22,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
 
         #region Test Methods - Validate Valid Cases
         [Fact]
-        public void Validate_ValidRequest_ShouldBeValid()
+        public void Validar_RequisicaoValida_DeveSerValida()
         {
             var command = CreateValidCommand();
 
@@ -36,7 +36,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
         [Theory]
         [InlineData("")]
         [InlineData("   ")]
-        public void Validate_MissingFullName_ShouldBeInvalid(string value)
+        public void Validar_NomeCompletoAusente_DeveSerInvalida(string value)
         {
             var command = CreateValidCommand(fullName: value);
 
@@ -49,7 +49,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
         [Theory]
         [InlineData("123")]
         [InlineData("1234567890")]
-        public void Validate_InvalidCpfLength_ShouldBeInvalid(string value)
+        public void Validar_TamanhoCpfInvalido_DeveSerInvalida(string value)
         {
             var command = CreateValidCommand(cpf: value);
 
@@ -60,7 +60,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
         }
 
         [Fact]
-        public void Validate_DefaultBirthDate_ShouldBeInvalid()
+        public void Validar_DataNascimentoPadrao_DeveSerInvalida()
         {
             var command = CreateValidCommand(birthDate: default(DateOnly));
 
@@ -71,7 +71,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
         }
 
         [Fact]
-        public void Validate_MissingAddressStreet_ShouldBeInvalid()
+        public void Validar_LogradouroAusente_DeveSerInvalida()
         {
             var address = new AddressDto
             {

@@ -2,6 +2,7 @@ using CustomerPlatform.Application.Abstractions.Results;
 using CustomerPlatform.Application.Abstractions.Search;
 using CustomerPlatform.Application.Cqrs.Commands;
 using CustomerPlatform.Application.DTOs;
+using CustomerPlatform.Infrastructure.Data.Context;
 using CustomerPlatform.Infrastructure.DependencyInjections;
 using CustomerPlatform.Infrastructure.Observability;
 using CustomerPlatform.Infrastructure.Search;
@@ -11,6 +12,7 @@ using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.EntityFrameworkCore;
 using NUnit.Framework;
 
 namespace CustomerPlatform.IntegrationTests.Tests.Worker
@@ -23,8 +25,10 @@ namespace CustomerPlatform.IntegrationTests.Tests.Worker
     {
         #region Variables
         private ConfigureServices _configureServices = null!;
+        private CustomerPlatformDbContext _dbContext = null!;
         private IHost _workerHost = null!;
         private string _indexName = string.Empty;
+        private string _queueName = string.Empty;
         #endregion
 
         #region SetUp Methods
@@ -32,12 +36,16 @@ namespace CustomerPlatform.IntegrationTests.Tests.Worker
         public async Task SetUp()
         {
             _indexName = $"customers-worker-{Guid.NewGuid():N}";
+            _queueName = $"customerplatform-worker-{Guid.NewGuid():N}";
             Environment.SetEnvironmentVariable("ElasticSearch__IndexName", _indexName);
+            Environment.SetEnvironmentVariable("RabbitMq__QueueName", _queueName);
 
             _configureServices = new ConfigureServices();
+            _dbContext = _configureServices.ServiceProvider.GetRequiredService<CustomerPlatformDbContext>();
 
             var initializer = _configureServices.ServiceProvider.GetRequiredService<ElasticSearchInitializer>();
             await initializer.EnsureIndexAsync().ConfigureAwait(false);
+            await ClearDatabaseAsync().ConfigureAwait(false);
 
             _workerHost = CreateWorkerHost(_configureServices.Configuration);
             await _workerHost.StartAsync().ConfigureAwait(false);
@@ -50,13 +58,16 @@ namespace CustomerPlatform.IntegrationTests.Tests.Worker
                 await _workerHost.StopAsync().ConfigureAwait(false);
 
             _workerHost?.Dispose();
+            await ClearDatabaseAsync().ConfigureAwait(false);
+            _configureServices.ServiceProvider.Dispose();
             Environment.SetEnvironmentVariable("ElasticSearch__IndexName", null);
+            Environment.SetEnvironmentVariable("RabbitMq__QueueName", null);
         }
         #endregion
 
         #region Test Methods - OutboxFlow Valid Cases
         [Test]
-        public async Task OutboxFlow_ShouldIndexCustomer()
+        public async Task FluxoOutbox_DeveIndexarCliente()
         {
             // Arrange
             var mediator = _configureServices.ServiceProvider.GetRequiredService<IMediator>();
@@ -146,6 +157,23 @@ namespace CustomerPlatform.IntegrationTests.Tests.Worker
             }
 
             return Result<CustomerDto>.Failure("Timeout aguardando indexacao.");
+        }
+
+        private async Task ClearDatabaseAsync()
+        {
+            var suspicions = await _dbContext.DuplicateSuspicions.ToListAsync().ConfigureAwait(false);
+            if (suspicions.Count > 0)
+                _dbContext.DuplicateSuspicions.RemoveRange(suspicions);
+
+            var outbox = await _dbContext.OutboxEvents.ToListAsync().ConfigureAwait(false);
+            if (outbox.Count > 0)
+                _dbContext.OutboxEvents.RemoveRange(outbox);
+
+            var customers = await _dbContext.Customers.ToListAsync().ConfigureAwait(false);
+            if (customers.Count > 0)
+                _dbContext.Customers.RemoveRange(customers);
+
+            await _dbContext.SaveChangesAsync().ConfigureAwait(false);
         }
         #endregion
     }

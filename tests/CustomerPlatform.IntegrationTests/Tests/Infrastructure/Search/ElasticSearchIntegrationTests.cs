@@ -41,7 +41,7 @@ namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Search
 
         #region Test Methods - IndexAndSearch Valid Cases
         [Test]
-        public async Task IndexAndSearch_ShouldReturnCustomer()
+        public async Task IndexarEBuscar_DeveRetornarCliente()
         {
             // Arranjo
             var customerId = Guid.NewGuid();
@@ -81,6 +81,148 @@ namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Search
             Assert.That(searchResult.IsSuccess, Is.True);
             Assert.That(searchResult.Data, Is.Not.Null);
             Assert.That(searchResult.Data!, Has.Some.Matches<CustomerDto>(current => current.Id == customerId));
+        }
+        #endregion
+
+        #region Test Methods - SearchAsync Valid Cases
+        [Test]
+        public async Task SearchAsync_DeveOrdenarPorRelevancia()
+        {
+            // Arranjo
+            var exactId = Guid.NewGuid();
+            var similarId = Guid.NewGuid();
+            var exact = CustomerSeed.CreateIndividual(
+                exactId,
+                "Carlos Alberto",
+                "22233344455",
+                "carlos@teste.com",
+                "11999990000");
+
+            var similar = CustomerSeed.CreateIndividual(
+                similarId,
+                "Carlos Al",
+                "22233344456",
+                "carlos2@teste.com",
+                "11999991111");
+
+            await _searchService.IndexAsync(exact).ConfigureAwait(false);
+            await _searchService.IndexAsync(similar).ConfigureAwait(false);
+
+            var criteria = new CustomerSearchCriteria
+            {
+                Name = "Carlos Alberto",
+                PageNumber = 1,
+                PageSize = 10
+            };
+
+            // Acao
+            var searchResult = await _searchService.SearchAsync(criteria).ConfigureAwait(false);
+
+            // Assertiva
+            Assert.That(searchResult.IsSuccess, Is.True);
+            Assert.That(searchResult.Data, Is.Not.Null);
+
+            var results = searchResult.Data!.ToList();
+            Assert.That(results.Count, Is.GreaterThanOrEqualTo(2));
+            Assert.That(results[0].Id, Is.EqualTo(exactId));
+        }
+
+        [Test]
+        public async Task SearchAsync_SeedGrande_DeveRetornarExatoPrimeiro()
+        {
+            // Arranjo
+            var seed = CustomerSeed.CreateIndividualsBatch(100, "Seed Cliente");
+            foreach (var customer in seed)
+                await _searchService.IndexAsync(customer).ConfigureAwait(false);
+
+            var exactId = Guid.NewGuid();
+            var similarId = Guid.NewGuid();
+            var exact = CustomerSeed.CreateIndividual(
+                exactId,
+                "Cliente Relevante",
+                "33344455566",
+                "relevante@teste.com",
+                "11911112222");
+
+            var similar = CustomerSeed.CreateIndividual(
+                similarId,
+                "Cliente Relev",
+                "33344455567",
+                "relevante2@teste.com",
+                "11911113333");
+
+            await _searchService.IndexAsync(exact).ConfigureAwait(false);
+            await _searchService.IndexAsync(similar).ConfigureAwait(false);
+
+            var criteria = new CustomerSearchCriteria
+            {
+                Name = "Cliente Relevante",
+                PageNumber = 1,
+                PageSize = 5
+            };
+
+            // Acao
+            var searchResult = await _searchService.SearchAsync(criteria).ConfigureAwait(false);
+
+            // Assertiva
+            Assert.That(searchResult.IsSuccess, Is.True);
+            Assert.That(searchResult.Data, Is.Not.Null);
+
+            var results = searchResult.Data!.ToList();
+            Assert.That(results.Count, Is.GreaterThanOrEqualTo(2));
+            Assert.That(results[0].Id, Is.EqualTo(exactId));
+        }
+
+        [Test]
+        public async Task SearchAsync_FiltroPorEmailETelefone_DeveRetornarClienteUnico()
+        {
+            // Arranjo
+            var targetId = Guid.NewGuid();
+            var target = new CustomerDto
+            {
+                Id = targetId,
+                CustomerType = TipoCliente.PF,
+                Document = "98765432109",
+                Name = "Cliente Filtro",
+                Email = "filtro@teste.com",
+                Phone = "11912345678",
+                Address = new AddressDto
+                {
+                    Street = "Rua Teste",
+                    Number = "50",
+                    Complement = "Casa",
+                    PostalCode = "12345000",
+                    City = "Sao Paulo",
+                    State = "SP"
+                },
+                CreatedAt = DateTime.UtcNow
+            };
+
+            var other = CustomerSeed.CreateIndividual(
+                Guid.NewGuid(),
+                "Cliente Outro",
+                "98765432108",
+                "outro@teste.com",
+                "11900001111");
+
+            await _searchService.IndexAsync(target).ConfigureAwait(false);
+            await _searchService.IndexAsync(other).ConfigureAwait(false);
+
+            var criteria = new CustomerSearchCriteria
+            {
+                Email = "filtro",
+                Phone = "11912345678",
+                PageNumber = 1,
+                PageSize = 5
+            };
+
+            // Acao
+            var searchResult = await _searchService.SearchAsync(criteria).ConfigureAwait(false);
+
+            // Assertiva
+            Assert.That(searchResult.IsSuccess, Is.True);
+            Assert.That(searchResult.Data, Is.Not.Null);
+            Assert.That(searchResult.Data!, Has.Exactly(1).Matches<CustomerDto>(current => current.Id == targetId));
         }
         #endregion
     }

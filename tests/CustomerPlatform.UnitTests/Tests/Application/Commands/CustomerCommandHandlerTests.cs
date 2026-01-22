@@ -65,7 +65,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
 
         #region Test Methods - Handle CreateIndividualCustomerCommand Valid Cases
         [Fact]
-        public async Task Handle_CreateIndividualCustomerCommand_ValidRequest_ShouldCreateCustomer()
+        public async Task Tratar_CreateIndividualCustomerCommand_RequisicaoValida_DeveCriarCliente()
         {
             var command = CreateValidIndividualCommand();
 
@@ -99,7 +99,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
 
         #region Test Methods - Handle CreateIndividualCustomerCommand Invalid Cases
         [Fact]
-        public async Task Handle_CreateIndividualCustomerCommand_InvalidRequest_ShouldReturnFailure()
+        public async Task Tratar_CreateIndividualCustomerCommand_RequisicaoInvalida_DeveRetornarFalha()
         {
             var command = CreateValidIndividualCommand();
 
@@ -122,7 +122,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
 
         [Theory]
         [InlineData("11111111111")]
-        public async Task Handle_CreateIndividualCustomerCommand_InvalidDomain_ShouldReturnFailure(string cpf)
+        public async Task Tratar_CreateIndividualCustomerCommand_DominioInvalido_DeveRetornarFalha(string cpf)
         {
             var command = CreateValidIndividualCommand(cpf: cpf);
 
@@ -145,7 +145,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
 
         #region Test Methods - Handle CreateIndividualCustomerCommand Exception Cases
         [Fact]
-        public async Task Handle_CreateIndividualCustomerCommand_OutboxFailure_ShouldReturnFailure()
+        public async Task Tratar_CreateIndividualCustomerCommand_FalhaOutbox_DeveRetornarFalha()
         {
             var command = CreateValidIndividualCommand();
 
@@ -173,7 +173,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
 
         #region Test Methods - Handle CreateCompanyCustomerCommand Valid Cases
         [Fact]
-        public async Task Handle_CreateCompanyCustomerCommand_ValidRequest_ShouldCreateCustomer()
+        public async Task Tratar_CreateCompanyCustomerCommand_RequisicaoValida_DeveCriarCliente()
         {
             var command = CreateValidCompanyCommand();
 
@@ -207,7 +207,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
 
         #region Test Methods - Handle CreateCompanyCustomerCommand Invalid Cases
         [Fact]
-        public async Task Handle_CreateCompanyCustomerCommand_InvalidRequest_ShouldReturnFailure()
+        public async Task Tratar_CreateCompanyCustomerCommand_RequisicaoInvalida_DeveRetornarFalha()
         {
             var command = CreateValidCompanyCommand();
 
@@ -230,7 +230,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
 
         [Theory]
         [InlineData("86655518000180")]
-        public async Task Handle_CreateCompanyCustomerCommand_InvalidDomain_ShouldReturnFailure(string cnpj)
+        public async Task Tratar_CreateCompanyCustomerCommand_DominioInvalido_DeveRetornarFalha(string cnpj)
         {
             var command = CreateValidCompanyCommand(cnpj: cnpj);
 
@@ -253,7 +253,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
 
         #region Test Methods - Handle UpdateIndividualCustomerCommand Valid Cases
         [Fact]
-        public async Task Handle_UpdateIndividualCustomerCommand_ValidRequest_ShouldUpdateCustomer()
+        public async Task Tratar_UpdateIndividualCustomerCommand_RequisicaoValida_DeveAtualizarCliente()
         {
             var customer = CreateIndividualCustomer();
             var command = CreateValidUpdateIndividualCommand(customer.Id);
@@ -287,7 +287,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
 
         #region Test Methods - Handle UpdateIndividualCustomerCommand Invalid Cases
         [Fact]
-        public async Task Handle_UpdateIndividualCustomerCommand_InvalidRequest_ShouldReturnFailure()
+        public async Task Tratar_UpdateIndividualCustomerCommand_RequisicaoInvalida_DeveRetornarFalha()
         {
             var command = CreateValidUpdateIndividualCommand(Guid.NewGuid());
 
@@ -306,7 +306,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
         }
 
         [Fact]
-        public async Task Handle_UpdateIndividualCustomerCommand_NotFound_ShouldReturnFailure()
+        public async Task Tratar_UpdateIndividualCustomerCommand_NaoEncontrado_DeveRetornarFalha()
         {
             var command = CreateValidUpdateIndividualCommand(Guid.NewGuid());
 
@@ -327,7 +327,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
         }
 
         [Fact]
-        public async Task Handle_UpdateIndividualCustomerCommand_WrongType_ShouldReturnFailure()
+        public async Task Tratar_UpdateIndividualCustomerCommand_TipoIncorreto_DeveRetornarFalha()
         {
             var customer = CreateCompanyCustomer();
             var command = CreateValidUpdateIndividualCommand(customer.Id);
@@ -350,7 +350,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
 
         [Theory]
         [InlineData("email-invalido")]
-        public async Task Handle_UpdateIndividualCustomerCommand_InvalidDomain_ShouldReturnFailure(string email)
+        public async Task Tratar_UpdateIndividualCustomerCommand_DominioInvalido_DeveRetornarFalha(string email)
         {
             var customer = CreateIndividualCustomer();
             var command = CreateValidUpdateIndividualCommand(customer.Id, email: email);
@@ -374,7 +374,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
 
         #region Test Methods - Handle UpdateCompanyCustomerCommand Valid Cases
         [Fact]
-        public async Task Handle_UpdateCompanyCustomerCommand_ValidRequest_ShouldUpdateCustomer()
+        public async Task Tratar_UpdateCompanyCustomerCommand_RequisicaoValida_DeveAtualizarCliente()
         {
             var customer = CreateCompanyCustomer();
             var command = CreateValidUpdateCompanyCommand(customer.Id);
@@ -408,7 +408,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Commands
 
         #region Test Methods - Handle UpdateCompanyCustomerCommand Invalid Cases
         [Fact]
-        public async Task Handle_UpdateCompanyCustomerCommand_WrongType_ShouldReturnFailure()
+        public async Task Tratar_UpdateCompanyCustomerCommand_TipoIncorreto_DeveRetornarFalha()
         {
             var customer = CreateIndividualCustomer();
             var command = CreateValidUpdateCompanyCommand(customer.Id);

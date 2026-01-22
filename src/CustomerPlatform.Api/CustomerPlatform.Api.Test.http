@@ -1,0 +1,79 @@
+@baseUrl = http://localhost:5000
+@correlationId = {{$guid}}
+
+### Health
+GET {{baseUrl}}/health
+X-Correlation-Id: {{correlationId}}
+Accept: application/json
+
+### Create PF
+# @name createPf
+POST {{baseUrl}}/customers/pf
+X-Correlation-Id: {{correlationId}}
+Content-Type: application/json
+
+{
+  "fullName": "Maria da Silva",
+  "cpf": "17871018434",
+  "email": "maria@teste.com",
+  "phone": "11999999999",
+  "birthDate": "1990-01-10",
+  "address": {
+    "street": "Rua Central",
+    "number": "100",
+    "complement": "Apto 12",
+    "postalCode": "12345000",
+    "city": "Sao Paulo",
+    "state": "SP"
+  }
+}
+
+@customerId = {{createPf.response.body.id}}
+
+### Create PJ
+# @name createPj
+POST {{baseUrl}}/customers/pj
+X-Correlation-Id: {{correlationId}}
+Content-Type: application/json
+
+{
+  "corporateName": "Empresa Exemplo LTDA",
+  "tradeName": "Empresa Exemplo",
+  "cnpj": "29267190000190",
+  "email": "contato@empresa.com",
+  "phone": "1133334444",
+  "address": {
+    "street": "Avenida Principal",
+    "number": "200",
+    "complement": "Sala 10",
+    "postalCode": "12345001",
+    "city": "Sao Paulo",
+    "state": "SP"
+  }
+}
+
+### Update Customer
+PUT {{baseUrl}}/customers/{{customerId}}
+X-Correlation-Id: {{correlationId}}
+Content-Type: application/json
+
+{
+  "customerType": "PF",
+  "fullName": "Maria da Silva Atualizada",
+  "email": "maria@teste.com",
+  "phone": "11988887777",
+  "birthDate": "1990-01-10",
+  "address": {
+    "street": "Rua Central",
+    "number": "150",
+    "complement": "Apto 21",
+    "postalCode": "12345002",
+    "city": "Sao Paulo",
+    "state": "SP"
+  }
+}
+
+### Search Customers
+GET {{baseUrl}}/customers/search?name=Maria&email=maria@teste.com&pageNumber=1&pageSize=10
+X-Correlation-Id: {{correlationId}}
+Accept: application/json

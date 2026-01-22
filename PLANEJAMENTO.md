@@ -43,14 +43,15 @@ Fase 5 - API e Worker
 - [x] Criar Worker e consumidores de eventos para deduplicacao.
 - [x] Aplicar resiliencia no Worker (RabbitMQ/Elastic).
 - [x] Criar testes de integracao da API (cadastro/atualizacao/health).
-- [ ] Criar testes do fluxo completo do Worker (Outbox -> Rabbit -> Elastic).
+- [x] Criar testes do fluxo completo do Worker (Outbox -> Rabbit -> Elastic).
 - [x] Registrar Prompt #5 em `PROMPTS_UTILIZADOS.md`.
 
 Fase 6 - Testes, Docker e Docs
 - [x] Criar UnitTests e IntegrationTests com Ductus.FluentDocker.
 - [x] Ajustar docker compose para PostgreSQL, RabbitMQ, Search e observabilidade.
-- [ ] Atualizar README/COMO_EXECUTAR e preencher DECISOES_TECNICAS e PROMPTS_UTILIZADOS.
-- [ ] Registrar Prompt #6 em `PROMPTS_UTILIZADOS.md`.
+- [x] Atualizar README/COMO_EXECUTAR e preencher DECISOES_TECNICAS e PROMPTS_UTILIZADOS.
+- [x] Adicionar arquivo .http e exemplos no Swagger.
+- [x] Registrar Prompt #6 em `PROMPTS_UTILIZADOS.md`.
 
 ## Estado atual (mapeado)
 Dominio
@@ -84,7 +85,7 @@ Testes
 - [x] `tests/CustomerPlatform.UnitTests` existe.
 - [x] `tests/CustomerPlatform.IntegrationTests` existe (setup inicial).
 - [x] Testes de integracao da API adicionados.
-- [ ] Testes do fluxo completo do Worker pendentes.
+- [x] Testes do fluxo completo do Worker adicionados.
 
 Docker
 - [x] Pasta `docker/` com compose files existe.
@@ -92,9 +93,10 @@ Docker
 - [x] `docker-compose.exemplo.yml` existe.
 
 Docs
-- [x] README.md, DESAFIO.md, TEMPLATE_ENTREGA.md, ESTRUTURA_PROJETO.md existem.
+- [x] README.md, DESAFIO.md, TEMPLATE_ENTREGA.md, ESTRUTURA_PROJETO.md existem em `docs/`.
+- [x] README.md na raiz criado com instrucoes de uso.
 - [x] DECISOES_TECNICAS.md existe.
-- [ ] CRITERIOS_AVALIACAO.md e COMO_EXECUTAR.md faltam.
+- [x] CRITERIOS_AVALIACAO.md e COMO_EXECUTAR.md criados.
 - [x] PROMPTS_UTILIZADOS.md existe.
 - [x] ARQUITETURA.md existe.
 - [x] PLANEJAMENTO.md existe.

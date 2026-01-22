@@ -1,8 +1,6 @@
 using CustomerPlatform.Infrastructure.FluentDocker.Builders;
 using Ductus.FluentDocker.Builders;
 using Ductus.FluentDocker.Services;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace CustomerPlatform.Api
 {

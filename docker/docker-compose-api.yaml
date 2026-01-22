@@ -33,7 +33,6 @@ services:
       - env/connectionStrings.postgres.env
       - env/connectionStrings.rabbitmq.env
       - env/connectionStrings.elasticsearch.env
-      - env/minio.env
       - env/serilog.env
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}

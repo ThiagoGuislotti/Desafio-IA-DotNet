@@ -38,7 +38,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Queries
 
         #region Test Methods - Handle GetCustomerByIdQuery Valid Cases
         [Fact]
-        public async Task Handle_GetCustomerByIdQuery_ExistingCustomer_ShouldReturnData()
+        public async Task Tratar_GetCustomerByIdQuery_ClienteExistente_DeveRetornarDados()
         {
             var customer = CreateCustomer();
             var query = new GetCustomerByIdQuery { Id = customer.Id };
@@ -61,7 +61,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Queries
 
         #region Test Methods - Handle GetCustomerByIdQuery Invalid Cases
         [Fact]
-        public async Task Handle_GetCustomerByIdQuery_InvalidRequest_ShouldReturnFailure()
+        public async Task Tratar_GetCustomerByIdQuery_RequisicaoInvalida_DeveRetornarFalha()
         {
             var query = new GetCustomerByIdQuery { Id = Guid.Empty };
 
@@ -77,7 +77,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Queries
         }
 
         [Fact]
-        public async Task Handle_GetCustomerByIdQuery_NotFound_ShouldReturnFailure()
+        public async Task Tratar_GetCustomerByIdQuery_NaoEncontrado_DeveRetornarFalha()
         {
             var query = new GetCustomerByIdQuery { Id = Guid.NewGuid() };
 
@@ -97,7 +97,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Queries
 
         #region Test Methods - Handle SearchCustomersQuery Valid Cases
         [Fact]
-        public async Task Handle_SearchCustomersQuery_ValidQuery_ShouldReturnResults()
+        public async Task Tratar_SearchCustomersQuery_ConsultaValida_DeveRetornarResultados()
         {
             var query = new SearchCustomersQuery { Name = TestData.NomeCompleto };
             var customers = new List<CustomerDto> { CustomerDtoMapper.Map(CreateCustomer()) };
@@ -119,7 +119,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Queries
 
         #region Test Methods - Handle SearchCustomersQuery Invalid Cases
         [Fact]
-        public async Task Handle_SearchCustomersQuery_InvalidQuery_ShouldReturnFailure()
+        public async Task Tratar_SearchCustomersQuery_ConsultaInvalida_DeveRetornarFalha()
         {
             var query = new SearchCustomersQuery { PageNumber = 0 };
 

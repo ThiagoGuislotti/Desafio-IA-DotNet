@@ -1,5 +1,6 @@
 using CustomerPlatform.Api;
 using CustomerPlatform.Api.Middlewares;
+using CustomerPlatform.Api.Swagger;
 using CustomerPlatform.Application.DependencyInjections;
 using CustomerPlatform.Infrastructure.DependencyInjections;
 using CustomerPlatform.Infrastructure.Observability;
@@ -16,7 +17,11 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddCustomHostedService();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options =>
+{
+    options.SchemaFilter<SwaggerExamplesSchemaFilter>();
+    options.OperationFilter<SwaggerExamplesOperationFilter>();
+});
 builder.Services.AddHealthChecks()
     .AddNpgSql(
         builder.Configuration.GetConnectionString("PostgreSql") ?? string.Empty,

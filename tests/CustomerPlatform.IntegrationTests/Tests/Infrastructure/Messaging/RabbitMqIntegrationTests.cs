@@ -55,7 +55,7 @@ namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Messaging
 
         #region Test Methods - PublishEvent Valid Cases
         [Test]
-        public async Task PublishEvent_ShouldBeConsumed()
+        public async Task PublicarEvento_DeveSerConsumido()
         {
             // Arranjo
             using var publisher = new RabbitMqEventPublisher(Options.Create(_rabbitOptions));
@@ -91,7 +91,7 @@ namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Messaging
 
         #region Test Methods - OutboxWriter Valid Cases
         [Test]
-        public async Task OutboxWriter_ShouldPersistEvent()
+        public async Task OutboxWriter_DevePersistirEvento()
         {
             // Arranjo
             var eventId = Guid.NewGuid();

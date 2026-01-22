@@ -22,7 +22,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
 
         #region Test Methods - Validate Valid Cases
         [Fact]
-        public void Validate_ValidRequest_ShouldBeValid()
+        public void Validar_RequisicaoValida_DeveSerValida()
         {
             var command = CreateValidCommand();
 
@@ -36,7 +36,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
         [Theory]
         [InlineData("")]
         [InlineData("   ")]
-        public void Validate_MissingCorporateName_ShouldBeInvalid(string value)
+        public void Validar_RazaoSocialAusente_DeveSerInvalida(string value)
         {
             var command = CreateValidCommand(corporateName: value);
 
@@ -49,7 +49,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
         [Theory]
         [InlineData("123")]
         [InlineData("1234567890123")]
-        public void Validate_InvalidCnpjLength_ShouldBeInvalid(string value)
+        public void Validar_TamanhoCnpjInvalido_DeveSerInvalida(string value)
         {
             var command = CreateValidCommand(cnpj: value);
 
@@ -60,7 +60,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
         }
 
         [Fact]
-        public void Validate_MissingAddressCity_ShouldBeInvalid()
+        public void Validar_CidadeAusente_DeveSerInvalida()
         {
             var address = new AddressDto
             {

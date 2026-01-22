@@ -1,6 +1,4 @@
 #if !IMPLICIT_USINGS
-using System.Threading;
-using System.Threading.Tasks;
 #endif
 
 namespace CustomerPlatform.Application.Abstractions.Repositories

@@ -56,8 +56,6 @@ namespace CustomerPlatform.Infrastructure.Deduplication
             var criteria = new CustomerSearchCriteria
             {
                 Name = customer.Name,
-                Email = customer.Email,
-                Phone = customer.Phone,
                 PageNumber = 1,
                 PageSize = _options.MaxCandidates
             };

@@ -20,7 +20,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
 
         #region Test Methods - Validate Valid Cases
         [Fact]
-        public void Validate_DefaultRequest_ShouldBeValid()
+        public void Validar_RequisicaoPadrao_DeveSerValida()
         {
             var query = new SearchCustomersQuery();
 
@@ -32,7 +32,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
 
         #region Test Methods - Validate Invalid Cases
         [Fact]
-        public void Validate_PageNumberZero_ShouldBeInvalid()
+        public void Validar_NumeroPaginaZero_DeveSerInvalida()
         {
             var query = new SearchCustomersQuery { PageNumber = 0 };
 
@@ -45,7 +45,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
         [Theory]
         [InlineData(0)]
         [InlineData(101)]
-        public void Validate_PageSizeOutOfRange_ShouldBeInvalid(int size)
+        public void Validar_TamanhoPaginaForaDoLimite_DeveSerInvalida(int size)
         {
             var query = new SearchCustomersQuery { PageSize = size };
 
@@ -56,7 +56,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
         }
 
         [Fact]
-        public void Validate_NameTooLong_ShouldBeInvalid()
+        public void Validar_NomeMuitoLongo_DeveSerInvalida()
         {
             var query = new SearchCustomersQuery { Name = new string('a', 201) };
 

@@ -45,7 +45,7 @@ namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Data
 
         #region Test Methods - PersistCustomer Valid Cases
         [Test]
-        public async Task PersistCustomer_ShouldSaveAndLoad()
+        public async Task PersistirCliente_DeveSalvarECarregar()
         {
             // Arranjo
             var address = new Endereco(

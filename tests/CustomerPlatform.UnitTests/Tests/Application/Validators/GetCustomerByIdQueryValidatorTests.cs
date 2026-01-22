@@ -20,7 +20,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
 
         #region Test Methods - Validate Valid Cases
         [Fact]
-        public void Validate_ValidRequest_ShouldBeValid()
+        public void Validar_RequisicaoValida_DeveSerValida()
         {
             var query = new GetCustomerByIdQuery { Id = Guid.NewGuid() };
 
@@ -32,7 +32,7 @@ namespace CustomerPlatform.UnitTests.Tests.Application.Validators
 
         #region Test Methods - Validate Invalid Cases
         [Fact]
-        public void Validate_EmptyId_ShouldBeInvalid()
+        public void Validar_IdVazio_DeveSerInvalida()
         {
             var query = new GetCustomerByIdQuery { Id = Guid.Empty };
 

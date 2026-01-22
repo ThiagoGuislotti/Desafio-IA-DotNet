@@ -51,7 +51,7 @@ namespace CustomerPlatform.Api
 
                 var dbTask = WaitForDbContextAsync(token);
                 var completed = await Task.WhenAny(dbTask).ConfigureAwait(false);
-                await Task.WhenAll(completed).ConfigureAwait(false);
+                await completed.ConfigureAwait(false);
 
                 _logger.LogInformation(
                     "[Started: Services]-[{Environment}] - [{Application}]",

@@ -13,18 +13,18 @@ X-Correlation-Id: {{correlationId}}
 Content-Type: application/json
 
 {
-  "fullName": "Maria da Silva",
+  "nome": "Maria da Silva",
   "cpf": "17871018434",
   "email": "maria@teste.com",
-  "phone": "11999999999",
-  "birthDate": "1990-01-10",
-  "address": {
-    "street": "Rua Central",
-    "number": "100",
-    "complement": "Apto 12",
-    "postalCode": "12345000",
-    "city": "Sao Paulo",
-    "state": "SP"
+  "telefone": "11999999999",
+  "dataNascimento": "1990-01-10",
+  "endereco": {
+    "logradouro": "Rua Central",
+    "numero": "100",
+    "complemento": "Apto 12",
+    "cep": "12345000",
+    "cidade": "Sao Paulo",
+    "estado": "SP"
   }
 }
 
@@ -37,18 +37,18 @@ X-Correlation-Id: {{correlationId}}
 Content-Type: application/json
 
 {
-  "corporateName": "Empresa Exemplo LTDA",
-  "tradeName": "Empresa Exemplo",
+  "razaoSocial": "Empresa Exemplo LTDA",
+  "nomeFantasia": "Empresa Exemplo",
   "cnpj": "29267190000190",
   "email": "contato@empresa.com",
-  "phone": "1133334444",
-  "address": {
-    "street": "Avenida Principal",
-    "number": "200",
-    "complement": "Sala 10",
-    "postalCode": "12345001",
-    "city": "Sao Paulo",
-    "state": "SP"
+  "telefone": "1133334444",
+  "endereco": {
+    "logradouro": "Avenida Principal",
+    "numero": "200",
+    "complemento": "Sala 10",
+    "cep": "12345001",
+    "cidade": "Sao Paulo",
+    "estado": "SP"
   }
 }
 
@@ -58,18 +58,18 @@ X-Correlation-Id: {{correlationId}}
 Content-Type: application/json
 
 {
-  "customerType": "PF",
-  "fullName": "Maria da Silva Atualizada",
+  "tipo": "PF",
+  "nome": "Maria da Silva Atualizada",
   "email": "maria@teste.com",
-  "phone": "11988887777",
-  "birthDate": "1990-01-10",
-  "address": {
-    "street": "Rua Central",
-    "number": "150",
-    "complement": "Apto 21",
-    "postalCode": "12345002",
-    "city": "Sao Paulo",
-    "state": "SP"
+  "telefone": "11988887777",
+  "dataNascimento": "1990-01-10",
+  "endereco": {
+    "logradouro": "Rua Central",
+    "numero": "150",
+    "complemento": "Apto 21",
+    "cep": "12345002",
+    "cidade": "Sao Paulo",
+    "estado": "SP"
   }
 }
 

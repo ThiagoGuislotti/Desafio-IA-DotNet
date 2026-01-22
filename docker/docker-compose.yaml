@@ -1,36 +1,42 @@
 services:
+
   # -> Services -> Databases
   postgres:
     restart: no
     extends:
-      file: services/databases/docker-compose-postgres.yaml
+      file: docker-compose-postgres.yaml
       service: postgres
 
   # -> Services -> Messaging
   rabbitmq:
     restart: no
     extends:
-      file: services/messaging/docker-compose-rabbitmq.yaml
+      file: docker-compose-rabbitmq.yaml
       service: rabbitmq
 
   # -> Services -> Search
   elasticsearch:
     restart: no
     extends:
-      file: services/search/docker-compose-elasticsearch.yaml
+      file: docker-compose-elasticsearch.yaml
       service: elasticsearch
+  kibana:
+    restart: no
+    extends:
+      file: docker-compose-kibana.yaml
+      service: kibana
 
   # -> Observability
   otel-collector:
     restart: no
     extends:
-      file: observability/docker-compose-otel.yaml
+      file: docker-compose-otel.yaml
       service: otel-collector
 
   aspire-dashboard:
     restart: no
     extends:
-      file: observability/docker-compose-aspire-dashboard.yaml
+      file: docker-compose-aspire-dashboard.yaml
       service: aspire-dashboard
 
   # -> Application -> API
@@ -75,15 +81,15 @@ networks:
     driver: bridge
 
 volumes:
-  data-protection-keys:
-    name: data-protection-keys
+
+  # -> Databases (Database data)
   postgres-data:
     name: postgres-data
-  rabbitmq-data:
+    
+  # -> Messaging (Messaging)
+  rabbitmq-data:      # RabbitMQ data
     name: rabbitmq-data
+
+  # -> Search (Search engine data)
   elasticsearch-data:
     name: elasticsearch-data
-  prometheus-data:
-    name: prometheus-data
-  prometheus-config:
-    name: prometheus-config

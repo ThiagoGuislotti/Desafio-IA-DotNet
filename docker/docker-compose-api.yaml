@@ -26,8 +26,6 @@ services:
       start_period: 2s
     ports:
       - "5000:80"
-    volumes:
-      - data-protection-keys:/home/unet/.aspnet/DataProtection-Keys:rw
     env_file:
       - env/connectionStrings.otlp.env
       - env/connectionStrings.postgres.env
@@ -45,7 +43,3 @@ networks:
   nginxproxy:
     name: nginxproxy
     driver: bridge
-
-volumes:
-  data-protection-keys:
-    name: data-protection-keys

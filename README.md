@@ -35,6 +35,7 @@ Este projeto implementa um desafio tecnico de cadastro de clientes com separacao
   - [DTOs Principais](#dtos-principais)
   - [Enums](#enums)
 - [Build e Testes](#build-e-testes)
+- [Testes de Relevancia e Deduplicacao](#testes-de-relevancia-e-deduplicacao)
 - [Contribuicao](#contribuicao)
 - [Dependencias](#dependencias)
 - [Referencias](#referencias)
@@ -139,6 +140,17 @@ TipoCliente
 dotnet build CustomerPlatform.sln
 dotnet test
 ```
+
+---
+
+## Testes de Relevancia e Deduplicacao
+
+A cobertura atual valida os principais cenarios de busca e deduplicacao para o MVP:
+
+- Relevancia (ElasticSearch): garante indexacao e consulta basica, ordenacao com nome exato em primeiro e filtros por email/telefone.
+  - Arquivo: `tests/CustomerPlatform.IntegrationTests/Tests/Infrastructure/Search/ElasticSearchIntegrationTests.cs`
+- Deduplicacao: confirma suspeita com nome + telefone e nome + email, ausencia de suspeita quando apenas o nome e similar e quando compara PJ vs PF, e seed grande para validar consistencia de score.
+  - Arquivo: `tests/CustomerPlatform.IntegrationTests/Tests/Infrastructure/Deduplication/DeduplicationIntegrationTests.cs`
 
 ---
 

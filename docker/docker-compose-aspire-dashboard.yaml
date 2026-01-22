@@ -4,10 +4,11 @@ services:
   aspire-dashboard:
     # https://azure.microsoft.com/pt-br/products/category/containers/
     # https://learn.microsoft.com/pt-br/dotnet/core/diagnostics/observability-otlp-example
-    image: mcr.microsoft.com/dotnet/aspire-dashboard:8.0.0
+    image: mcr.microsoft.com/dotnet/aspire-dashboard:13
     hostname: aspire-dashboard
     container_name: aspire-dashboard-${COMPOSE_PROJECT_NAME}
     restart: always
+    user: "0:0"
     deploy:
       resources:
         limits:

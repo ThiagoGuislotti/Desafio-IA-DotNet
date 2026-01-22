@@ -33,9 +33,11 @@ dotnet test
 
 - Swagger: `http://localhost:5000/swagger`
 - Health: `http://localhost:5000/health`
-- Aspire Dashboard: `http://localhost:18888`
+- Aspire Dashboard: `http://localhost:18888` (sem autenticacao)
+
 - RabbitMQ UI: `http://localhost:15672` (usuario: admin, senha: NetToolsKit.Pass!)
 - PostgreSQL: `Host=localhost;Port=5432;Database=CustomerPlatformDbDevelopment;Username=postgres;Password=NetToolsKit.Pass!`
+- Kibana: `http://localhost:5601` (sem autenticacao)
 - ElasticSearch: `http://localhost:9200`
 
 ## Documentacao do desafio

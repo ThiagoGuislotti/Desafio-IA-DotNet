@@ -105,6 +105,28 @@ Fluxos principais:
 - Busca: API REST -> Query Handler -> Search/DB -> retorno paginado e ordenado por relevancia.
 - Deduplicacao: Event Consumer (Worker) -> Deduplicacao + Search -> grava suspeitas -> publica DuplicataSuspeita.
 
+MER:
+
+Entidades (PostgreSQL):
+- Customers
+  - PK: customerId
+  - Colunas principais: customerType, document, fullName/corporateName/tradeName, email, phone, birthDate, address*, createdAt, updatedAt
+- OutboxEvents
+  - PK: outboxEventId
+  - Unico: eventId
+  - Colunas principais: eventType, payload (jsonb), occurredAt, createdAt, processedAt, retryCount, lastError
+- DuplicateSuspicions
+  - PK: duplicateSuspicionId
+  - Colunas principais: customerId, candidateCustomerId, score, reason, createdAt
+
+Relacionamentos logicos:
+- DuplicateSuspicions.customerId -> Customers.customerId
+- DuplicateSuspicions.candidateCustomerId -> Customers.customerId
+- OutboxEvents referencia o dominio via payload (sem FK).
+
+Read model (ElasticSearch):
+- Indice `customers`: id, customerType, document, name, tradeName, email, phone, address, createdAt, updatedAt.
+
 Mensageria e eventos:
 - Eventos: ClienteCriado, ClienteAtualizado, DuplicataSuspeita.
 - RabbitMQ para publicacao/consumo com retries e idempotencia.

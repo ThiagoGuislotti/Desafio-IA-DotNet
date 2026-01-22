@@ -41,12 +41,12 @@ namespace CustomerPlatform.Api.Swagger
         {
             return new OpenApiObject
             {
-                ["fullName"] = new OpenApiString("Maria da Silva"),
+                ["nome"] = new OpenApiString("Maria da Silva"),
                 ["cpf"] = new OpenApiString("17871018434"),
                 ["email"] = new OpenApiString("maria@teste.com"),
-                ["phone"] = new OpenApiString("11999999999"),
-                ["birthDate"] = new OpenApiString("1990-01-10"),
-                ["address"] = CreateAddressExample()
+                ["telefone"] = new OpenApiString("11999999999"),
+                ["dataNascimento"] = new OpenApiString("1990-01-10"),
+                ["endereco"] = CreateAddressExample()
             };
         }
 
@@ -54,12 +54,12 @@ namespace CustomerPlatform.Api.Swagger
         {
             return new OpenApiObject
             {
-                ["corporateName"] = new OpenApiString("Empresa Exemplo LTDA"),
-                ["tradeName"] = new OpenApiString("Empresa Exemplo"),
+                ["razaoSocial"] = new OpenApiString("Empresa Exemplo LTDA"),
+                ["nomeFantasia"] = new OpenApiString("Empresa Exemplo"),
                 ["cnpj"] = new OpenApiString("29267190000190"),
                 ["email"] = new OpenApiString("contato@empresa.com"),
-                ["phone"] = new OpenApiString("1133334444"),
-                ["address"] = CreateAddressExample()
+                ["telefone"] = new OpenApiString("1133334444"),
+                ["endereco"] = CreateAddressExample()
             };
         }
 
@@ -67,12 +67,12 @@ namespace CustomerPlatform.Api.Swagger
         {
             return new OpenApiObject
             {
-                ["customerType"] = new OpenApiString("PF"),
-                ["fullName"] = new OpenApiString("Maria da Silva Atualizada"),
+                ["tipo"] = new OpenApiString("PF"),
+                ["nome"] = new OpenApiString("Maria da Silva Atualizada"),
                 ["email"] = new OpenApiString("maria@teste.com"),
-                ["phone"] = new OpenApiString("11988887777"),
-                ["birthDate"] = new OpenApiString("1990-01-10"),
-                ["address"] = CreateAddressExample()
+                ["telefone"] = new OpenApiString("11988887777"),
+                ["dataNascimento"] = new OpenApiString("1990-01-10"),
+                ["endereco"] = CreateAddressExample()
             };
         }
 
@@ -81,15 +81,15 @@ namespace CustomerPlatform.Api.Swagger
             return new OpenApiObject
             {
                 ["id"] = new OpenApiString("9f2d39a0f0d344c7883b9f6f2eddd061"),
-                ["customerType"] = new OpenApiString("PF"),
-                ["document"] = new OpenApiString("17871018434"),
-                ["name"] = new OpenApiString("Maria da Silva"),
-                ["tradeName"] = new OpenApiString(""),
+                ["tipo"] = new OpenApiString("PF"),
+                ["documento"] = new OpenApiString("17871018434"),
+                ["nome"] = new OpenApiString("Maria da Silva"),
+                ["nomeFantasia"] = new OpenApiString(""),
                 ["email"] = new OpenApiString("maria@teste.com"),
-                ["phone"] = new OpenApiString("11999999999"),
-                ["address"] = CreateAddressExample(),
-                ["createdAt"] = new OpenApiString("2024-01-10T10:00:00Z"),
-                ["updatedAt"] = new OpenApiString("2024-01-10T10:00:00Z")
+                ["telefone"] = new OpenApiString("11999999999"),
+                ["endereco"] = CreateAddressExample(),
+                ["criadoEm"] = new OpenApiString("2024-01-10T10:00:00Z"),
+                ["atualizadoEm"] = new OpenApiString("2024-01-10T10:00:00Z")
             };
         }
 
@@ -97,12 +97,12 @@ namespace CustomerPlatform.Api.Swagger
         {
             return new OpenApiObject
             {
-                ["street"] = new OpenApiString("Rua Central"),
-                ["number"] = new OpenApiString("100"),
-                ["complement"] = new OpenApiString("Apto 12"),
-                ["postalCode"] = new OpenApiString("12345000"),
-                ["city"] = new OpenApiString("Sao Paulo"),
-                ["state"] = new OpenApiString("SP")
+                ["logradouro"] = new OpenApiString("Rua Central"),
+                ["numero"] = new OpenApiString("100"),
+                ["complemento"] = new OpenApiString("Apto 12"),
+                ["cep"] = new OpenApiString("12345000"),
+                ["cidade"] = new OpenApiString("Sao Paulo"),
+                ["estado"] = new OpenApiString("SP")
             };
         }
         #endregion

@@ -16,12 +16,6 @@ services:
     networks:
       - nginxproxy
     command: [ --config=/etc/otel-collector-config.yaml ]
-    healthcheck:
-      test: ["CMD-SHELL", "wget --spider -q http://localhost:13133/ || exit 1"]
-      interval: 15s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
     ports:
       - 1888:1888     # pprof extension
       - 8888:8888     # Prometheus metrics exposed by the Collector

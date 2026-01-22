@@ -36,7 +36,6 @@ Este projeto implementa um desafio tecnico de cadastro de clientes com separacao
   - [Enums](#enums)
 - [Build e Testes](#build-e-testes)
 - [Testes de Relevancia e Deduplicacao](#testes-de-relevancia-e-deduplicacao)
-- [Contribuicao](#contribuicao)
 - [Dependencias](#dependencias)
 - [Referencias](#referencias)
 - [Licenca](#licenca)
@@ -151,12 +150,6 @@ A cobertura atual valida os principais cenarios de busca e deduplicacao para o M
   - Arquivo: `tests/CustomerPlatform.IntegrationTests/Tests/Infrastructure/Search/ElasticSearchIntegrationTests.cs`
 - Deduplicacao: confirma suspeita com nome + telefone e nome + email, ausencia de suspeita quando apenas o nome e similar e quando compara PJ vs PF, e seed grande para validar consistencia de score.
   - Arquivo: `tests/CustomerPlatform.IntegrationTests/Tests/Infrastructure/Deduplication/DeduplicationIntegrationTests.cs`
-
----
-
-## Contribuicao
-
-Este repositorio faz parte de um desafio tecnico. Caso queira evoluir o projeto, siga o planejamento em `PLANEJAMENTO.md` e registre decisoes em `DECISOES_TECNICAS.md`.
 
 ---
 

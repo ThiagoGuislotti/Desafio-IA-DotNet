@@ -27,7 +27,7 @@ namespace CustomerPlatform.IntegrationTests.Tests
         {
             try
             {
-                var dockerRoot = DirectoryLocator.LocateDirectory(new[] { "docker" });
+                var dockerRoot = DirectoryLocator.LocateDirectory(["docker"]);
                 var dotnetVersion = RuntimeInformation.FrameworkDescription.Replace(" ", "").Replace(".", "").ToLower();
                 var serviceName = $"customerplatform-integration-tests-{dotnetVersion}";
 

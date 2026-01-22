@@ -46,6 +46,11 @@ app.UseAuthorization();
 app.MapControllers();
 app.MapHealthChecks("/health");
 
+var lifetime = app.Services.GetRequiredService<IHostApplicationLifetime>();
+lifetime.ApplicationStarted.Register(() => app.Logger.LogInformation("[Inicio:Api]-[{Environment}] - [{Application}]", app.Environment.EnvironmentName, AppDomain.CurrentDomain.FriendlyName));
+lifetime.ApplicationStopping.Register(() => app.Logger.LogInformation("[Parando:Api]-[{Environment}] - [{Application}]", app.Environment.EnvironmentName, AppDomain.CurrentDomain.FriendlyName));
+lifetime.ApplicationStopped.Register(() => app.Logger.LogInformation("[Parado:Api]-[{Environment}] - [{Application}]", app.Environment.EnvironmentName, AppDomain.CurrentDomain.FriendlyName));
+
 await app.RunAsync();
 
 public partial class Program

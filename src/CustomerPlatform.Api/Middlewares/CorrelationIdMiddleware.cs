@@ -1,3 +1,5 @@
+using Serilog.Context;
+
 namespace CustomerPlatform.Api.Middlewares
 {
     /// <summary>
@@ -44,7 +46,8 @@ namespace CustomerPlatform.Api.Middlewares
                 return Task.CompletedTask;
             });
 
-            await _next(context).ConfigureAwait(false);
+            using (LogContext.PushProperty("CorrelationId", correlationId))
+                await _next(context).ConfigureAwait(false);
         }
         #endregion
 

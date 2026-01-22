@@ -1,4 +1,5 @@
 using CustomerPlatform.Infrastructure.FluentDocker.Builders;
+using CustomerPlatform.Infrastructure.FluentDocker.Utilities;
 using Ductus.FluentDocker.Builders;
 using Ductus.FluentDocker.Services;
 
@@ -55,27 +56,28 @@ namespace CustomerPlatform.Api
                     _environment.EnvironmentName,
                     AppDomain.CurrentDomain.FriendlyName);
 
-                var dockerRoot = GetDockerRoot();
+                var dockerRoot = DirectoryLocator.LocateDirectory(["docker"]);
                 var serviceName = "customerplatform-development";
 
                 _compositeService = new Builder()
                     .UseContainer()
                     .UseCompose()
                     .ServiceName(serviceName)
+                    .FromFile(Path.Combine(dockerRoot, "docker-compose-otel.yaml"))
+                    .FromFile(Path.Combine(dockerRoot, "docker-compose-aspire-dashboard.yaml"))
                     .FromFile(Path.Combine(dockerRoot, "docker-compose-postgres.yaml"))
                     .FromFile(Path.Combine(dockerRoot, "docker-compose-rabbitmq.yaml"))
                     .FromFile(Path.Combine(dockerRoot, "docker-compose-elasticsearch.yaml"))
                     .FromFile(Path.Combine(dockerRoot, "docker-compose-kibana.yaml"))
-                    .FromFile(Path.Combine(dockerRoot, "docker-compose-otel.yaml"))
-                    .FromFile(Path.Combine(dockerRoot, "docker-compose-aspire-dashboard.yaml"))
                     .WithResolvedEnvironment(Path.Combine(dockerRoot, ".env"))
                     .WaitForHealthy(30000)
                     .RemoveOrphans()
                     .Build()
                     .Start();
 
-                _lifetime.ApplicationStopping.Register(OnShutdown);
                 IsDockerComposeRunning = true;
+
+                _lifetime.ApplicationStopping.Register(OnShutdown);
 
                 _logger.LogInformation(
                     "[Started: DockerCompose]-[{Environment}] - [{Application}]",
@@ -102,11 +104,6 @@ namespace CustomerPlatform.Api
         #endregion
 
         #region Private Methods/Operators
-        private string GetDockerRoot()
-        {
-            return Path.GetFullPath(Path.Combine(_environment.ContentRootPath, "..", "..", "docker"));
-        }
-
         private void OnShutdown()
         {
             try

@@ -41,6 +41,11 @@ namespace CustomerPlatform.Worker.HostedServices
         /// <inheritdoc />
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logger.LogInformation(
+                "[Starting: CustomerEventsConsumer]-[{Exchange}]-[{Queue}]",
+                _options.ExchangeName,
+                _options.QueueName);
+
             await _consumer
                 .StartAsync(_options.QueueName, HandleMessageAsync, stoppingToken)
                 .ConfigureAwait(false);
@@ -55,9 +60,14 @@ namespace CustomerPlatform.Worker.HostedServices
             if (message is null)
                 throw new ArgumentNullException(nameof(message));
 
+            _logger.LogInformation("Evento recebido {EventType} ({EventId}).", message.EventType, message.EventId);
+
             if (message.EventType != ClienteCriado.EventTypeName &&
                 message.EventType != ClienteAtualizado.EventTypeName)
+            {
+                _logger.LogInformation("Evento ignorado {EventType} ({EventId}).", message.EventType, message.EventId);
                 return;
+            }
 
             using var scope = _scopeFactory.CreateScope();
             var dispatcher = scope.ServiceProvider.GetRequiredService<CustomerEventDispatcher>();

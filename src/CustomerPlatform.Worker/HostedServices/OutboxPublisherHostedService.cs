@@ -84,6 +84,11 @@ namespace CustomerPlatform.Worker.HostedServices
         /// <inheritdoc />
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
+            _logger.LogInformation(
+                "[Starting: OutboxPublisher]-[{Exchange}]-[{Queue}]",
+                _options.ExchangeName,
+                _options.QueueName);
+
             while (!stoppingToken.IsCancellationRequested)
             {
                 var processedAny = await ProcessBatchAsync(stoppingToken).ConfigureAwait(false);
@@ -109,6 +114,8 @@ namespace CustomerPlatform.Worker.HostedServices
             if (pending.Count == 0)
                 return false;
 
+            _logger.LogInformation("Outbox pendente: {Count} evento(s).", pending.Count);
+
             foreach (var outboxEvent in pending)
             {
                 if (cancellationToken.IsCancellationRequested)
@@ -116,6 +123,11 @@ namespace CustomerPlatform.Worker.HostedServices
 
                 try
                 {
+                    _logger.LogInformation(
+                        "Publicando evento {EventType} ({EventId}).",
+                        outboxEvent.EventType,
+                        outboxEvent.EventId);
+
                     await _publishPolicy
                         .ExecuteAsync(ct => PublishAsync(outboxEvent, ct), cancellationToken)
                         .ConfigureAwait(false);
@@ -130,6 +142,7 @@ namespace CustomerPlatform.Worker.HostedServices
             }
 
             await dbContext.SaveChangesAsync(cancellationToken).ConfigureAwait(false);
+            _logger.LogInformation("Outbox processada: {Count} evento(s).", pending.Count);
             return true;
         }
 

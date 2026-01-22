@@ -1,10 +1,11 @@
+﻿using System;
 using Microsoft.EntityFrameworkCore.Migrations;
+
+#nullable disable
 
 namespace CustomerPlatform.Infrastructure.Data.Context.Migrations
 {
-    /// <summary>
-    /// Migration inicial da base de dados.
-    /// </summary>
+    /// <inheritdoc />
     public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
@@ -15,12 +16,6 @@ namespace CustomerPlatform.Infrastructure.Data.Context.Migrations
                 columns: table => new
                 {
                     customerId = table.Column<Guid>(type: "uuid", nullable: false),
-                    customerType = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
-                    fullName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    corporateName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    tradeName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
-                    document = table.Column<string>(type: "character varying(14)", maxLength: 14, nullable: false),
-                    birthDate = table.Column<DateOnly>(type: "date", nullable: true),
                     email = table.Column<string>(type: "character varying(254)", maxLength: 254, nullable: false),
                     phone = table.Column<string>(type: "character varying(15)", maxLength: 15, nullable: false),
                     addressStreet = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: false),
@@ -30,11 +25,17 @@ namespace CustomerPlatform.Infrastructure.Data.Context.Migrations
                     addressCity = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     addressState = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
                     createdAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true)
+                    updatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    customerType = table.Column<string>(type: "character varying(2)", maxLength: 2, nullable: false),
+                    fullName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    document = table.Column<string>(type: "character varying(14)", maxLength: 14, nullable: true),
+                    birthDate = table.Column<DateOnly>(type: "date", nullable: true),
+                    corporateName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true),
+                    tradeName = table.Column<string>(type: "character varying(200)", maxLength: 200, nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_Customers", x => x.customerId);
+                    table.PrimaryKey("PK_Customers", x => x.customerId);
                 });
 
             migrationBuilder.CreateTable(
@@ -50,7 +51,7 @@ namespace CustomerPlatform.Infrastructure.Data.Context.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_DuplicateSuspicions", x => x.duplicateSuspicionId);
+                    table.PrimaryKey("PK_DuplicateSuspicions", x => x.duplicateSuspicionId);
                 });
 
             migrationBuilder.CreateTable(
@@ -69,27 +70,27 @@ namespace CustomerPlatform.Infrastructure.Data.Context.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("pk_OutboxEvents", x => x.outboxEventId);
+                    table.PrimaryKey("PK_OutboxEvents", x => x.outboxEventId);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "ix_Customers_document",
+                name: "IX_Customers_document",
                 table: "Customers",
                 column: "document",
                 unique: true);
 
             migrationBuilder.CreateIndex(
-                name: "ix_DuplicateSuspicions_candidateCustomerId",
+                name: "IX_DuplicateSuspicions_candidateCustomerId",
                 table: "DuplicateSuspicions",
                 column: "candidateCustomerId");
 
             migrationBuilder.CreateIndex(
-                name: "ix_DuplicateSuspicions_customerId",
+                name: "IX_DuplicateSuspicions_customerId",
                 table: "DuplicateSuspicions",
                 column: "customerId");
 
             migrationBuilder.CreateIndex(
-                name: "ix_OutboxEvents_eventId",
+                name: "IX_OutboxEvents_eventId",
                 table: "OutboxEvents",
                 column: "eventId",
                 unique: true);
@@ -99,13 +100,13 @@ namespace CustomerPlatform.Infrastructure.Data.Context.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Customers");
+
+            migrationBuilder.DropTable(
                 name: "DuplicateSuspicions");
 
             migrationBuilder.DropTable(
                 name: "OutboxEvents");
-
-            migrationBuilder.DropTable(
-                name: "Customers");
         }
     }
 }

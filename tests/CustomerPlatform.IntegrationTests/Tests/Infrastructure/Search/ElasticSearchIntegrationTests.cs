@@ -2,6 +2,8 @@ using CustomerPlatform.Application.Abstractions.Search;
 using CustomerPlatform.Application.DTOs;
 using CustomerPlatform.Domain.Enums;
 using CustomerPlatform.Infrastructure.Search;
+using CustomerPlatform.IntegrationTests.Assets;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
 
@@ -23,9 +25,10 @@ namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Search
         [SetUp]
         public async Task SetUp()
         {
+            var configuration = new ConfigureServices().Configuration;
             _options = new ElasticSearchOptions
             {
-                ConnectionString = GlobalSetup.ElasticSearchUrl,
+                ConnectionString = configuration.GetConnectionString("ElasticSearch") ?? string.Empty,
                 IndexName = $"customers-tests-{Guid.NewGuid():N}"
             };
 

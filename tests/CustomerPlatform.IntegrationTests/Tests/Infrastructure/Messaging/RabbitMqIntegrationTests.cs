@@ -2,7 +2,9 @@ using CustomerPlatform.Domain.Enums;
 using CustomerPlatform.Domain.Events;
 using CustomerPlatform.Infrastructure.Data.Context;
 using CustomerPlatform.Infrastructure.Messaging;
+using CustomerPlatform.IntegrationTests.Assets;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using NUnit.Framework;
 
@@ -23,8 +25,9 @@ namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Messaging
         [SetUp]
         public async Task SetUp()
         {
+            var configuration = new ConfigureServices().Configuration;
             var options = new DbContextOptionsBuilder<CustomerPlatformDbContext>()
-                .UseNpgsql(GlobalSetup.PostgresConnectionString)
+                .UseNpgsql(configuration.GetConnectionString("PostgreSql"))
                 .Options;
 
             _dbContext = new CustomerPlatformDbContext(options);
@@ -32,7 +35,7 @@ namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Messaging
 
             _rabbitOptions = new RabbitMqOptions
             {
-                ConnectionString = GlobalSetup.RabbitMqConnectionString,
+                ConnectionString = configuration.GetConnectionString("RabbitMq") ?? string.Empty,
                 ExchangeName = RabbitMqOptions.DefaultExchangeName,
                 ExchangeType = "topic"
             };

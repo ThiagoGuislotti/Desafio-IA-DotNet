@@ -1,7 +1,9 @@
 using CustomerPlatform.Domain.Entities;
 using CustomerPlatform.Domain.ValueObjects;
 using CustomerPlatform.Infrastructure.Data.Context;
+using CustomerPlatform.IntegrationTests.Assets;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using NUnit.Framework;
 
 namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Data
@@ -20,8 +22,9 @@ namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Data
         [SetUp]
         public async Task SetUp()
         {
+            var configuration = new ConfigureServices().Configuration;
             var options = new DbContextOptionsBuilder<CustomerPlatformDbContext>()
-                .UseNpgsql(GlobalSetup.PostgresConnectionString)
+                .UseNpgsql(configuration.GetConnectionString("PostgreSql"))
                 .Options;
 
             _dbContext = new CustomerPlatformDbContext(options);

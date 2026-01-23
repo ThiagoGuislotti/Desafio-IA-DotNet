@@ -91,9 +91,21 @@ namespace CustomerPlatform.Worker.HostedServices
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                var processedAny = await ProcessBatchAsync(stoppingToken).ConfigureAwait(false);
-                if (!processedAny)
+                try
+                {
+                    var processedAny = await ProcessBatchAsync(stoppingToken).ConfigureAwait(false);
+                    if (!processedAny)
+                        await Task.Delay(TimeSpan.FromSeconds(PollDelaySeconds), stoppingToken).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException) when (stoppingToken.IsCancellationRequested)
+                {
+                    break;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogError(ex, "Falha ao processar outbox. Tentando novamente em {Delay}s.", PollDelaySeconds);
                     await Task.Delay(TimeSpan.FromSeconds(PollDelaySeconds), stoppingToken).ConfigureAwait(false);
+                }
             }
         }
         #endregion

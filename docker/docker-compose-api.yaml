@@ -34,7 +34,7 @@ services:
       - env/serilog.env
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT}
-      ASPNETCORE_URLS: http://+:80
+      ASPNETCORE_HTTP_PORTS: "80"
       VIRTUAL_HOST: api
       VIRTUAL_PORT: 80
       Serilog__Properties__Application: "CustomerPlatform.Api"

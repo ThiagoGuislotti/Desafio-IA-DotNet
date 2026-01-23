@@ -54,10 +54,6 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
-      otel-collector:
-        condition: service_healthy
-      aspire-dashboard:
-        condition: service_healthy
 
   # -> Application -> Worker
   worker:
@@ -72,9 +68,7 @@ services:
         condition: service_healthy
       elasticsearch:
         condition: service_healthy
-      otel-collector:
-        condition: service_healthy
-      aspire-dashboard:
+      api:
         condition: service_healthy
 
 networks:
@@ -83,7 +77,6 @@ networks:
     driver: bridge
 
 volumes:
-
   # -> Databases (Database data)
   postgres-data:
     name: postgres-data

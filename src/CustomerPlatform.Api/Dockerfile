@@ -68,8 +68,6 @@ COPY --chown=unet:gnet --from=publish /app/publish .
 
 # Environment configuration
 ENV DOTNET_EnableDiagnostics=0
-ENV ASPNETCORE_URLS=http://+:80
-ENV ASPNETCORE_ENVIRONMENT=Production
 
 # Expose port (API only)
 EXPOSE 80

@@ -18,12 +18,6 @@ services:
           memory: "4GB"
     networks:
       - nginxproxy
-    healthcheck:
-      test: ["CMD-SHELL", "test -f /app/CustomerPlatform.Worker.dll || exit 1"]
-      interval: 30s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
     env_file:
       - env/connectionStrings.otlp.env
       - env/connectionStrings.postgres.env

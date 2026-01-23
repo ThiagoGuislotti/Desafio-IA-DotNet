@@ -105,15 +105,13 @@ namespace CustomerPlatform.Infrastructure.Deduplication
         private static decimal CalculateScore(CustomerDto source, CustomerDto candidate)
         {
             var nameScore = CalculateNameSimilarity(source.Name, candidate.Name);
-            var documentScore = CalculateDocumentSimilarity(source.Document, candidate.Document);
             var emailScore = string.Equals(source.Email, candidate.Email, StringComparison.OrdinalIgnoreCase) ? 1m : 0m;
             var phoneScore = string.Equals(source.Phone, candidate.Phone, StringComparison.OrdinalIgnoreCase) ? 1m : 0m;
 
             return Math.Round(
                 (nameScore * 0.5m) +
-                (documentScore * 0.2m) +
-                (emailScore * 0.2m) +
-                (phoneScore * 0.1m),
+                (emailScore * 0.3m) +
+                (phoneScore * 0.2m),
                 2);
         }
 
@@ -129,27 +127,6 @@ namespace CustomerPlatform.Infrastructure.Deduplication
             var maxLength = Math.Max(normalizedSource.Length, normalizedCandidate.Length);
             var similarity = 1m - (decimal)distance / maxLength;
             return Math.Max(0m, similarity);
-        }
-
-        private static decimal CalculateDocumentSimilarity(string source, string candidate)
-        {
-            var normalizedSource = NormalizeDigits(source);
-            var normalizedCandidate = NormalizeDigits(candidate);
-
-            if (normalizedSource.Length == 0 || normalizedCandidate.Length == 0)
-                return 0m;
-
-            if (normalizedSource.Length != normalizedCandidate.Length)
-                return 0m;
-
-            var equal = 0;
-            for (var i = 0; i < normalizedSource.Length; i++)
-            {
-                if (normalizedSource[i] == normalizedCandidate[i])
-                    equal++;
-            }
-
-            return (decimal)equal / normalizedSource.Length;
         }
 
         private static int CalculateLevenshteinDistance(string source, string target)
@@ -188,13 +165,6 @@ namespace CustomerPlatform.Infrastructure.Deduplication
                     .Where(char.IsLetterOrDigit)
                     .ToArray())
                     .ToUpperInvariant();
-        }
-
-        private static string NormalizeDigits(string value)
-        {
-            return string.IsNullOrWhiteSpace(value)
-                ? string.Empty
-                : new string(value.Where(char.IsDigit).ToArray());
         }
 
         private static string BuildReason(CustomerDto source, CustomerDto candidate, decimal score)

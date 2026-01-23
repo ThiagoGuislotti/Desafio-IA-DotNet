@@ -17,6 +17,10 @@ namespace CustomerPlatform.Api.Controllers
     [Route("customers")]
     public sealed class CustomersController : ControllerBase
     {
+        #region Constants
+        private const string PaginationHeaderName = "X-Pagination";
+        #endregion
+
         #region Variables
         private readonly IMediator _mediator;
         #endregion
@@ -111,6 +115,11 @@ namespace CustomerPlatform.Api.Controllers
                 return this.ToActionResult(Result<IReadOnlyCollection<CustomerDto>>.Failure("Requisicao obrigatoria."));
 
             var result = await _mediator.Send(query, cancellationToken).ConfigureAwait(false);
+            if (result.IsSuccess)
+            {
+                var headerValue = $"{{pageSize={query.PageSize},currentPage={query.PageNumber}}}";
+                Response.Headers[PaginationHeaderName] = headerValue;
+            }
             return this.ToActionResult(result);
         }
         #endregion

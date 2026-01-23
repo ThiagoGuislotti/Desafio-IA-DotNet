@@ -71,14 +71,14 @@ namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Deduplication
             var candidate = CustomerSeed.CreateIndividual(
                 candidateId,
                 "Maria Souza",
-                "12345678901",
+                "11111111111",
                 "maria1@teste.com",
                 "11999999999");
 
             var source = CustomerSeed.CreateIndividual(
                 sourceId,
                 "Maria Souza",
-                "12345678902",
+                "99999999999",
                 "maria2@teste.com",
                 "11999999999");
 
@@ -123,14 +123,14 @@ namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Deduplication
             var candidate = CustomerSeed.CreateIndividual(
                 candidateId,
                 "Joao da Silva",
-                "98765432100",
+                "22222222222",
                 "joao@teste.com",
                 "11911112222");
 
             var source = CustomerSeed.CreateIndividual(
                 sourceId,
                 "Joao Silva",
-                "98765432101",
+                "88888888888",
                 "joao@teste.com",
                 "11933334444");
 
@@ -159,14 +159,14 @@ namespace CustomerPlatform.IntegrationTests.Tests.Infrastructure.Deduplication
             var candidate = CustomerSeed.CreateIndividual(
                 candidateId,
                 "Cliente Alvo",
-                "44556677889",
+                "33333333333",
                 "alvo@teste.com",
                 "11977778888");
 
             var source = CustomerSeed.CreateIndividual(
                 sourceId,
                 "Cliente Alvo",
-                "44556677880",
+                "77777777777",
                 "alvo2@teste.com",
                 "11977778888");
 

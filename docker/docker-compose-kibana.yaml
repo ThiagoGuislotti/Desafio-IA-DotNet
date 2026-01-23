@@ -10,8 +10,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: "1"
-          memory: "1GB"
+          cpus: "2"
+          memory: "2GB"
     networks:
       - nginxproxy
     ports:

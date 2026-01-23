@@ -53,7 +53,8 @@ Fase 6 - Testes, Docker e Docs
 - [x] Adicionar arquivo .http e exemplos no Swagger.
 - [x] Registrar Prompt #6 em `PROMPTS_UTILIZADOS.md`.
 
-## Estado atual (mapeado)
+## Estado atual (mapeado):
+
 Dominio
 - [x] Entidades base de cliente existem em `src/CustomerPlatform.Domain/Entities/Customer.cs`.
 - [x] Entidades PF/PJ separadas por arquivo em `src/CustomerPlatform.Domain/Entities`.
@@ -100,3 +101,12 @@ Docs
 - [x] PROMPTS_UTILIZADOS.md existe.
 - [x] ARQUITETURA.md existe.
 - [x] PLANEJAMENTO.md existe.
+
+## Pendências futuras melhorias:
+
+- [ ] Rate limiting e proteção contra abuso.
+- [ ] Versionamento de API.
+- [ ] Autenticação e autorização.
+- [ ] Testes de performance, benchmarks e carga.
+- [ ] Otimizações finas após análise de métricas reais.
+- [ ] Pipeline completo de CI/CD.

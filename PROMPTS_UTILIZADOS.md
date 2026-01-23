@@ -1161,11 +1161,28 @@ Regras:
 Criacao do README na raiz, documentacao de execucao em `COMO_EXECUTAR.md`, criterios de avaliacao em `CRITERIOS_AVALIACAO.md`, exemplos no Swagger, arquivo `.http` para testes manuais e testes de integracao para fluxo completo do Worker e deduplicacao com seed controlado.
 
 ### 🔄 Refinamentos Necessários
+
+**Geral**
 1- Inclusão de testes adicionais para ampliar a cobertura dos cenários críticos.
 2- Padronização da nomenclatura dos testes para maior consistência e clareza.
 
+**Worker**
+1- Correção de bugs de configuração.
+2- Inclusão de logs ausentes para melhor observabilidade.
+3- Correção de exceções sem tratamento adequado.
+
+**API**
+1- Correção de bugs de configuração.
+2- Ajuste de erros de configuração nos docker-compose.
+3- Correção de erro no cálculo de deduplicidade.
+
+**Docker**
+1- Ajuste de arquivos e configurações.
+2- Atualização de imagens com versões antigas.
+
+
 ### 📊 Avaliação Pessoal
 - [ ] Excelente - usei diretamente sem modificações
-- [x] Bom - fiz pequenos ajustes
-- [ ] Regular - precisei modificar bastante
+- [ ] Bom - fiz pequenos ajustes
+- [x] Regular - precisei modificar bastante
 - [ ] Ruim - tive que refazer manualmente
